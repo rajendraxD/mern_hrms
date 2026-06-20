@@ -18,9 +18,9 @@ export default function App() {
   }
   useEffect(() => {
     fetchUser();
-  })
+  }, [])
   return (
-    <div>{ JSON.stringify(user)}</div>
+    <div>{JSON.stringify(user)}</div>
 
   )
 }
