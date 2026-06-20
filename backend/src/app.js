@@ -12,6 +12,7 @@ import { apiLimiter } from "./middlewares/rateLimiter.js";
 import { requestContext } from "./middlewares/requestContext.js";
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import { logger } from "./config/logger.config.js";
+import { sendSuccess } from "./utils/ApiResponse.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,8 +40,8 @@ export function createApp() {
   // Static avatars (local disk fallback)
   app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
-  app.get("/", (res, req) => {
-    return res.send("Server is running...");
+  app.get("/", (req, res) => {
+    return sendSuccess(res, { message: "Server is running..." });
   });
 
   // app.use("/api", apiLimiter, routes);
