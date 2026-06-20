@@ -41,7 +41,7 @@ export function createApp() {
   app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
   app.get("/", (req, res) => {
-    return sendSuccess(res, { message: "Server is running..." });
+    return sendSuccess(res, {message: "Server is running..." });
   });
 
   // app.use("/api", apiLimiter, routes);
