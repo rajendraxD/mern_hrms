@@ -10,6 +10,6 @@ export default function App() {
     dispatch(getUser());
   }, [dispatch])
   return (
-    <div>{user?.message}</div>
+    <div>{JSON.stringify(user)}</div>
   )
 }
