@@ -13,6 +13,7 @@ import { requestContext } from "./middlewares/requestContext.js";
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import { logger } from "./config/logger.config.js";
 import { sendSuccess } from "./utils/ApiResponse.js";
+import userRoute from "./routes/user.route.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,7 +45,7 @@ export function createApp() {
     return sendSuccess(res, {message: "Server is running..." });
   });
 
-  // app.use("/api", apiLimiter, routes);
+  app.use("/api/users", apiLimiter, userRoute);
 
   app.use(notFound);
   app.use(errorHandler);

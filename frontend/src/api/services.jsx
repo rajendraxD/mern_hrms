@@ -1,7 +1,7 @@
 import api from './axios'
 
 export const userApi = {
-    get: (id) => api.get(`/users/${id}`),
+    get: () => api.get(`/users/getUser`),
 }
 export const profileApi = {
     // get: () => api.get('/profile'),
