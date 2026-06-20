@@ -1,5 +1,6 @@
+import { sendSuccess } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
 export const getUsers = asyncHandler(async (req, res) => {
-  return res.send("getUsers");
+  return sendSuccess(res, { message: "Get users" });
 });

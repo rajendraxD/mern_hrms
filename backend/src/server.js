@@ -3,10 +3,13 @@ import { connectDB } from "./config/db.config.js";
 import env from "./config/env.config.js";
 import { logger } from "./config/logger.config.js";
 
+const app = createApp();
+
+export default app;
+
 async function start() {
   try {
     await connectDB();
-    const app = createApp();
     const server = app.listen(env.port, () => {
       logger.info(
         `Server running on http://localhost:${env.port} [${env.nodeEnv}]`,
@@ -29,4 +32,7 @@ process.on("unhandledRejection", (reason) => {
   logger.error(`Unhandled Rejection: ${reason}`);
 });
 
-start();
+// Only start the server in local dev mode (not on Vercel where it's serverless)
+if (!process.env.VERCEL) {
+  start();
+}

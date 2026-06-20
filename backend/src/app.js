@@ -23,10 +23,28 @@ export function createApp() {
   app.set("trust proxy", 1);
   app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
+  const allowedOrigins = [
+    env.clientUrl,
+    "http://localhost:5173",
+    "http://localhost:5174",
+  ];
+
   app.use(
     cors({
-      origin: "*",
+      origin: function (origin, callback) {
+        // Allow requests with no origin (Postman, mobile apps, server-to-server)
+        if (!origin) {
+          return callback(null, true);
+        }
+
+        if (allowedOrigins.includes(origin)) {
+          callback(null, true);
+        } else {
+          callback(new Error(`CORS not allowed for origin: ${origin}`));
+        }
+      },
       credentials: true,
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     }),
   );
   app.use(
@@ -42,7 +60,7 @@ export function createApp() {
   app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
   app.get("/", (req, res) => {
-    return sendSuccess(res, {message: "Server is running..." });
+    return sendSuccess(res, { message: "Server is running..." });
   });
 
   app.use("/api/users", apiLimiter, userRoute);
