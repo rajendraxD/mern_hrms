@@ -61,7 +61,8 @@ const StyledDrawer = styled(MuiDrawer, {
 
 const user = {
   name: "Rajendra kumar",
-  email: "rajendraxd1@gmail.com"
+  email: "rajendraxd1@gmail.com",
+  role:"admin"
 }
 const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
   const [copied, setCopied] = React.useState(false);
@@ -80,7 +81,7 @@ const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
     }
   };
 
-  React.useEffect(() => {
+  React.useMemo(() => {
     if (user) {
       switch (user?.role) {
         case "admin":
@@ -92,6 +93,7 @@ const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
       }
     }
   }, [user, adminSidebarMenuItems, userSidebarMenuItems, sidebarBottomItems]);
+
   const listRef = React.useRef(null);
   const [showTopScrollIndicator, setShowTopScrollIndicator] =
     React.useState(false);

@@ -5,7 +5,7 @@ export const register = asyncHandler(async (req, res) => {
   const { name, email, password, avatar } = req.body;
   return sendSuccess(res, {
     message: "User registered successfully",
-    data: { name, email, password, avatar },
+    data: { name, email, password, avatar,role:'admin' },
   });
 });
 

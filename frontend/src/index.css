@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
+/* @custom-variant dark (&:where(.dark, .dark *)); */
 
 html,
 body {
@@ -8,5 +8,4 @@ body {
   padding: 0;
   box-sizing: border-box;
   font-family: "Outfit", sans-serif;
-  transition: background-color 0.3s ease;
 }
