@@ -1,25 +1,34 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import Loading from "../components/UI/Loading";
+import { Box, CircularProgress } from "@mui/material";
+
 export const PublicRoute = () => {
-  const { user, isLoading } = useSelector((state) => state.auth);
+  const { user, isLoading } = useSelector((state) => state.user);
   if (isLoading) {
-    return <Loading />;
+    return (
+      <Box sx={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
   }
   if (user) {
     return <Navigate to="/dashboard" replace />;
-  } else {
-    return <Outlet />;
   }
+  return <Outlet />;
 };
+
 export const ProtectedRoute = () => {
-  const { user, isLoading } = useSelector((state) => state.auth);
-  if (isLoading) {
-    return <Loading />;
+  const { user, isLoading } = useSelector((state) => state.user);
+  // Only show loading spinner during initial load (when we haven't loaded the user yet)
+  if (isLoading && !user) {
+    return (
+      <Box sx={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <CircularProgress />
+      </Box>
+    );
   }
   if (user) {
     return <Outlet />;
-  } else {
-    return <Navigate to="/login" replace />;
   }
+  return <Navigate to="/login" replace />;
 };

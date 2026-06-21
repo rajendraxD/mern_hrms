@@ -12,4 +12,13 @@ export default defineConfig({
     compress(),
     babel({ presets: [reactCompilerPreset()] }),
   ],
+  server: {
+    proxy: {
+      // Forward avatar /uploads requests to the backend server
+      '/uploads': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
+  },
 });

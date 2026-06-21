@@ -1,16 +1,19 @@
 import express from "express";
 import * as userController from "../controllers/user.controller.js";
+import { authLimiter } from "../middlewares/rateLimiter.js";
+import { authenticate, optionalAuth, requireAdmin } from "../middlewares/auth.js";
 
 const router = express.Router();
 
-//   router.route("/").get(userController.getUsers);
+// Public routes
+router.post("/register", authLimiter, userController.register);
+router.post("/login", authLimiter, userController.login);
+router.post("/logout", userController.logout);
+router.post("/refresh-token", userController.refreshToken);
 
-router
-  .post("/register", userController.register)
-  .post("/login", userController.register)
-  .get("/getUser", userController.getUsers);
-//   .post("", userController.createUser)
-//   .put(userController.updateUser)
-//   .delete(userController.deleteUser);
+// Protected routes
+router.get("/getUser", optionalAuth, userController.getUsers);
+router.get("/stats", authenticate, userController.getStats);
+router.get("/all", authenticate, requireAdmin, userController.getAllUsers);
 
 export default router;

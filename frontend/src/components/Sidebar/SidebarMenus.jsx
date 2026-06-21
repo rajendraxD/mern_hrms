@@ -1,6 +1,7 @@
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import SettingsIcon from "@mui/icons-material/Settings";
 import PeopleIcon from "@mui/icons-material/People";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 export const adminSidebarMenuItems = [
   {
@@ -24,3 +25,8 @@ export const userSidebarMenuItems = [
 export const sidebarBottomItems = [
   { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
 ];
+
+export const logoutItem = {
+  text: "Logout",
+  icon: <LogoutIcon />,
+};

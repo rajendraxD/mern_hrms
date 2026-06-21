@@ -13,16 +13,21 @@ import Box from "@mui/material/Box";
 import { NavLink } from "react-router-dom";
 import { drawerWidth, openedMixin, closedMixin } from "../Layout/layoutStyles";
 import Tooltip from "@mui/material/Tooltip";
-// import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import TooltipComponent from "../common/Tooltip";
+import AvatarUploadDialog from "../common/AvatarUploadDialog";
 import {
   adminSidebarMenuItems,
   sidebarBottomItems,
   userSidebarMenuItems,
+  logoutItem,
 } from "./SidebarMenus";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Toolbar from "@mui/material/Toolbar";
 import SidebarAvatar from "./SidebarAvatar";
+import { uploadAvatar, logout } from "../../stores/slices/user.slice";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -59,16 +64,15 @@ const StyledDrawer = styled(MuiDrawer, {
   ],
 }));
 
-const user = {
-  name: "Rajendra kumar",
-  email: "rajendraxd1@gmail.com",
-  role: "admin"
-}
 const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
   const [copied, setCopied] = React.useState(false);
-  // const { user } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { user, uploadingAvatar } = useSelector((state) => state.user);
   const theme = useTheme();
   const [sideBarMenuItems, setSideBarMenuItems] = React.useState([]);
+  const [avatarDialogOpen, setAvatarDialogOpen] = React.useState(false);
+  const [snackbar, setSnackbar] = React.useState({ open: false, message: "", severity: "success" });
+
 
   const handleCopy = async () => {
     try {
@@ -79,6 +83,20 @@ const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
     } catch (err) {
       console.error("Failed to copy!", err);
     }
+  };
+
+  const handleUploadAvatar = async (file) => {
+    try {
+      await dispatch(uploadAvatar(file)).unwrap();
+      setSnackbar({ open: true, message: "Profile picture updated successfully!", severity: "success" });
+      setAvatarDialogOpen(false);
+    } catch (error) {
+      setSnackbar({ open: true, message: error || "Failed to upload profile picture.", severity: "error" });
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
   React.useMemo(() => {
@@ -130,15 +148,20 @@ const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
       >
         <div className="flex flex-col justify-center items-center max-w-50 overflow-hidden transition-all duration-300 mx-auto">
           {/* The Avatar stays the same, only the size prop changes */}
-          <div className="relative p-0.75 rounded-full bg-linear-to-tr from-yellow-400 via-red-500 to-purple-600">
+          {/* <div className="relative p-0.75 rounded-full bg-linear-to-tr from-yellow-400 via-red-500 to-purple-600">
             <div
               className={`p-0.5 rounded-full
                 ${theme.palette.mode === "light" ? "bg-white" : "bg-gray-900"}
                 `}
-            >
-              <SidebarAvatar open={open} handleDrawerOpenClose={handleDrawerOpenClose} user={user} />
-            </div>
-          </div>
+            > */}
+              <SidebarAvatar
+                open={open}
+                handleDrawerOpenClose={handleDrawerOpenClose}
+                user={user}
+                onEditAvatar={() => setAvatarDialogOpen(true)}
+              />
+            {/* </div> */}
+          {/* </div> */}
           {/* Animate Height and Opacity */}
           <div
             className={`grid transition-all duration-300 ease-in-out ${open
@@ -368,8 +391,97 @@ const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
               </TooltipComponent>
             </ListItem>
           ))}
+          {/* Logout Button */}
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <TooltipComponent
+              title={!open ? "Logout" : ""}
+              placement="right"
+            >
+              <ListItemButton
+                onClick={() => dispatch(logout())}
+                draggable={false}
+                sx={[
+                  {
+                    minHeight: 48,
+                    px: 2.5,
+                    color: theme.palette.error.main,
+                    "&:hover": {
+                      bgcolor: theme.palette.action.hover,
+                    },
+                    "& .MuiListItemIcon-root": {
+                      color: theme.palette.error.main,
+                    },
+                  },
+                  open
+                    ? {
+                      justifyContent: "initial",
+                    }
+                    : {
+                      justifyContent: "center",
+                    },
+                ]}
+              >
+                <ListItemIcon
+                  sx={[
+                    {
+                      minWidth: 0,
+                      justifyContent: "center",
+                    },
+                    open
+                      ? {
+                        mr: 3,
+                      }
+                      : {
+                        mr: "auto",
+                      },
+                  ]}
+                >
+                  {logoutItem.icon}
+                </ListItemIcon>
+                <ListItemText
+                  primary={logoutItem.text}
+                  sx={[
+                    open
+                      ? {
+                        opacity: 1,
+                      }
+                      : {
+                        opacity: 0,
+                      },
+                  ]}
+                />
+              </ListItemButton>
+            </TooltipComponent>
+          </ListItem>
         </List>
       </Box>
+
+      {/* Avatar Upload Dialog */}
+      <AvatarUploadDialog
+        open={avatarDialogOpen}
+        onClose={() => setAvatarDialogOpen(false)}
+        currentAvatar={user?.avatar}
+        userName={user?.name}
+        onUpload={handleUploadAvatar}
+        uploading={uploadingAvatar}
+      />
+
+      {/* Success/Error Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </>
   );
 

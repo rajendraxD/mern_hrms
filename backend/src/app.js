@@ -14,6 +14,7 @@ import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import { logger } from "./config/logger.config.js";
 import { sendSuccess } from "./utils/ApiResponse.js";
 import userRoute from "./routes/user.route.js";
+import profileRoute from "./routes/profile.route.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -63,7 +64,8 @@ export function createApp() {
     return sendSuccess(res, { message: "Server is running..." });
   });
 
-  app.use("/api/users", apiLimiter, userRoute);
+  app.use("/api/users", userRoute);
+  app.use("/api/profile", profileRoute);
 
   app.use(notFound);
   app.use(errorHandler);

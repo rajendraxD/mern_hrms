@@ -7,3 +7,8 @@ export function sendSuccess(
   if (meta) body.meta = meta;
   return res.status(statusCode).json(body);
 }
+
+export function sendError(res, { statusCode = 400, message = "Failed" } = {}) {
+  const body = { success: false, message };
+  return res.status(statusCode).json(body);
+}
