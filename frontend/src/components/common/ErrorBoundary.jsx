@@ -1,14 +1,25 @@
 import { Component } from "react";
-import { FiAlertTriangle, FiRefreshCw } from "react-icons/fi";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Collapse from "@mui/material/Collapse";
+import Alert from "@mui/material/Alert";
+import { Navigate } from "react-router-dom";
+import ReportProblemIcon from "@mui/icons-material/ReportProblem";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import HomeIcon from "@mui/icons-material/Home";
+import BugReportIcon from "@mui/icons-material/BugReport";
 
 class ErrorBoundary extends Component {
+
   constructor(props) {
     super(props);
-    this.state = { hasError: false, error: null, errorInfo: null };
+    this.state = { hasError: false, error: null, errorInfo: null, showDetails: false, navigateHome: false };
   }
 
   static getDerivedStateFromError(error) {
-    return { hasError: true, error: error, errorInfo: null };
+    return { hasError: true, error, errorInfo: null };
   }
 
   componentDidCatch(error, errorInfo) {
@@ -16,67 +27,180 @@ class ErrorBoundary extends Component {
     console.error("ErrorBoundary caught:", error, errorInfo);
   }
 
-  handleReset = () => {
-    this.setState({ hasError: false, error: null, errorInfo: null });
+  handleGoHome = () => {
+    this.setState({ navigateHome: true });
   };
 
   handleReload = () => {
     window.location.reload();
   };
 
+  toggleDetails = () => {
+    this.setState((prev) => ({ showDetails: !prev.showDetails }));
+  };
+
   render() {
+    if (this.state.navigateHome) {
+      return <Navigate to="/" replace />;
+    }
+
     if (this.state.hasError) {
-      // Custom fallback UI
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
+      const { error, showDetails } = this.state;
+      const isDev = import.meta.env.VITE_NODE_ENV === "development";
+
       return (
-        <div
-          className="min-h-screen flex items-center justify-center bg-gray-50 px-4"
+        <Box
+          sx={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            bgcolor: "grey.50",
+            px: 2,
+          }}
           role="alert"
         >
-          <div className="max-w-md w-full text-center">
-            <div className="mx-auto h-20 w-20 rounded-full bg-red-100 flex items-center justify-center mb-6">
-              <FiAlertTriangle className="h-10 w-10 text-red-600" />
-            </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+          <Paper
+            elevation={0}
+            sx={{
+              maxWidth: 480,
+              width: "100%",
+              textAlign: "center",
+              p: { xs: 4, sm: 5 },
+              borderRadius: 4,
+              border: "1px solid",
+              borderColor: "grey.200",
+            }}
+          >
+            {/* Icon */}
+            <Box
+              sx={{
+                mx: "auto",
+                width: 80,
+                height: 80,
+                borderRadius: "50%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                bgcolor: "rgba(211, 47, 47, 0.08)",
+                mb: 3,
+              }}
+            >
+              <ReportProblemIcon
+                sx={{ fontSize: 40, color: "error.main" }}
+              />
+            </Box>
+
+            {/* Heading */}
+            <Typography variant="h5" fontWeight={700} gutterBottom>
               Something went wrong
-            </h1>
-            <p className="text-gray-500 mb-6">
-              An unexpected error occurred. Please try refreshing the page.
-            </p>
-            {import.meta.env.VITE_NODE_ENV === "development" && this.state.error && (
-              <div className="mb-6 p-4 bg-red-50 rounded-xl text-left border border-red-200">
-                <details className="group">
-                  <summary className="cursor-pointer text-sm font-semibold text-red-700 mb-2 hover:text-red-800">
-                    Error details
-                  </summary>
-                  <p className="text-sm font-mono text-red-700 break-all mb-2">
-                    {this.state.error.toString()}
-                  </p>
-                  {this.state.error.stack && (
-                    <pre className="text-xs font-mono text-red-600 whitespace-pre-wrap break-all bg-red-100/50 rounded-lg p-3 max-h-48 overflow-y-auto">
-                      {this.state.error.stack}
-                    </pre>
-                  )}
-                </details>
-              </div>
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{ mb: 4, lineHeight: 1.6 }}
+            >
+              An unexpected error occurred. You can go back to the home page
+              or refresh to continue.
+            </Typography>
+
+            {/* Error details (dev only) */}
+            {isDev && error && (
+              <Box sx={{ mb: 3, textAlign: "left" }}>
+                <Button
+                  size="small"
+                  startIcon={<BugReportIcon />}
+                  onClick={this.toggleDetails}
+                  sx={{ textTransform: "none", mb: 1 }}
+                >
+                  {showDetails ? "Hide" : "Show"} error details
+                </Button>
+                <Collapse in={showDetails}>
+                  <Alert
+                    severity="error"
+                    variant="outlined"
+                    sx={{
+                      borderRadius: 2,
+                      fontSize: "0.8rem",
+                      "& .MuiAlert-message": { width: "100%" },
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      fontFamily="monospace"
+                      sx={{ fontWeight: 600, mb: 1 }}
+                    >
+                      {error.toString()}
+                    </Typography>
+                    {error.stack && (
+                      <Box
+                        component="pre"
+                        sx={{
+                          fontSize: "0.7rem",
+                          fontFamily: "monospace",
+                          color: "error.dark",
+                          bgcolor: "rgba(211, 47, 47, 0.04)",
+                          borderRadius: 1.5,
+                          p: 1.5,
+                          maxHeight: 180,
+                          overflow: "auto",
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-all",
+                          m: 0,
+                          border: "1px solid",
+                          borderColor: "rgba(211, 47, 47, 0.12)",
+                        }}
+                      >
+                        {error.stack}
+                      </Box>
+                    )}
+                  </Alert>
+                </Collapse>
+              </Box>
             )}
-            <div className="flex items-center justify-center space-x-4">
-              <button onClick={this.handleReset} className="btn-secondary">
-                Try Again
-              </button>
-              <button
-                onClick={this.handleReload}
-                className="btn-primary inline-flex items-center"
+
+            {/* Actions */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                gap: 1.5,
+                justifyContent: "center",
+              }}
+            >
+              <Button
+                variant="outlined"
+                startIcon={<HomeIcon />}
+                onClick={() => this.handleGoHome()}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontWeight: 500,
+                }}
               >
-                <FiRefreshCw className="h-4 w-4 mr-2" />
+                Go to Home
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<RefreshIcon />}
+                onClick={this.handleReload}
+                sx={{
+                  borderRadius: 2,
+                  textTransform: "none",
+                  fontWeight: 500,
+                  boxShadow: "none",
+                  "&:hover": { boxShadow: "none" },
+                }}
+              >
                 Refresh Page
-              </button>
-            </div>
-          </div>
-        </div>
+              </Button>
+            </Box>
+          </Paper>
+        </Box>
       );
     }
 
