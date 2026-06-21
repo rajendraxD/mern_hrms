@@ -1,47 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
 
-/*
-  Register MUI theme tokens so Tailwind generates utility classes
-  like bg-primary-main, text-text-primary, border-divider, etc.
-  Actual values are synced at runtime by <ThemeSync /> inside ThemeWrapper.
-*/
-@theme {
-  --color-primary-main: transparent;
-  --color-primary-light: transparent;
-  --color-primary-dark: transparent;
-
-  --color-secondary-main: transparent;
-  --color-secondary-light: transparent;
-  --color-secondary-dark: transparent;
-
-  --color-background-default: transparent;
-  --color-background-paper: transparent;
-
-  --color-text-primary: transparent;
-  --color-text-secondary: transparent;
-
-  --color-divider: transparent;
-
-  --color-error: transparent;
-  --color-success: transparent;
-  --color-warning: transparent;
-  --color-info: transparent;
-}
-
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: "Outfit", sans-serif;
-}
-
-/*
-  Smooth theme switching — `color` is inherited so text colour transitions
-  everywhere; `background-color` on body covers the main page background
-  set by CssBaseline. MUI components (Paper, Card, etc.) update instantly
-  without delays or interference with their own animations.
-*/
-body {
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
