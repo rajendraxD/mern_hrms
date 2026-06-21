@@ -1,13 +1,47 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>frontend</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>frontend</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx">
+
+    (function () {
+      try {
+        var theme = localStorage.getItem("themeMode");
+        var supportDark =
+          window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches;
+        var isDark;
+        if (theme === "system") {
+          // Use the cached resolved theme, or fall back to OS preference
+          var cached = localStorage.getItem("resolvedTheme");
+          isDark = cached === "dark" || (!cached && supportDark);
+        } else if (theme === "dark") {
+          isDark = true;
+        } else if (!theme && supportDark) {
+          isDark = true;
+        } else {
+          isDark = false;
+        }
+        if (isDark) {
+          document.documentElement.classList.add("dark");
+          document.documentElement.style.backgroundColor = "#0f172a";
+        } else {
+          document.documentElement.classList.remove("dark");
+          document.documentElement.style.backgroundColor = "#ffffff";
+        }
+      } catch (e) {
+        console.error("Theme detection failed", e);
+      }
+    })();
+  </script>
+</body>
+
 </html>

@@ -4,6 +4,7 @@ import LoginPage from "./pages/features/auth/login/LoginPage";
 import ErrorBoundary from "./components/common/ErrorBoundary";
 import CssBaseline from "@mui/material/CssBaseline";
 import ThemeProvider from "./utils/MuiThemeProvider";
+import Layout from "./components/layout/Layout";
 
 export default function App() {
 
@@ -13,8 +14,10 @@ export default function App() {
       <BrowserRouter>
         <ErrorBoundary>
           <Routes>
-            <Route path="/" element={<LoginPage />} />
-            <Route path="*" element={<NotFoundPage />} />
+            <Route element={<Layout />}>
+              <Route path="/" element={<LoginPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Route>
           </Routes>
         </ErrorBoundary >
       </BrowserRouter>

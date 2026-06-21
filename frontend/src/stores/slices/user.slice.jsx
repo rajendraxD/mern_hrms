@@ -13,6 +13,14 @@ export const getUser = createAsyncThunk("getUser", async (_, { rejectWithValue }
     return rejectWithValue(getErrorMessage(error));
   }
 });
+export const logout = createAsyncThunk("logout", async (_, { rejectWithValue }) => {
+  try {
+    const res = await userApi.logout();
+    return res.data;
+  } catch (error) {
+    return rejectWithValue(getErrorMessage(error));
+  }
+});
 
 const initialState = {
   user: null,
