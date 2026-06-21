@@ -12,7 +12,6 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import Box from "@mui/material/Box";
 import { NavLink } from "react-router-dom";
 import { drawerWidth, openedMixin, closedMixin } from "../Layout/layoutStyles";
-import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 // import { useSelector } from "react-redux";
 import TooltipComponent from "../common/Tooltip";
@@ -23,6 +22,7 @@ import {
 } from "./SidebarMenus";
 import SettingsIcon from "@mui/icons-material/Settings";
 import Toolbar from "@mui/material/Toolbar";
+import SidebarAvatar from "./SidebarAvatar";
 
 const StyledDrawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -62,7 +62,7 @@ const StyledDrawer = styled(MuiDrawer, {
 const user = {
   name: "Rajendra kumar",
   email: "rajendraxd1@gmail.com",
-  role:"admin"
+  role: "admin"
 }
 const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
   const [copied, setCopied] = React.useState(false);
@@ -130,28 +130,13 @@ const Sidebar = React.memo(({ open, handleDrawerOpenClose, isMobile }) => {
       >
         <div className="flex flex-col justify-center items-center max-w-50 overflow-hidden transition-all duration-300 mx-auto">
           {/* The Avatar stays the same, only the size prop changes */}
-          <div className="relative p-[3px] rounded-full bg-linear-to-tr from-yellow-400 via-red-500 to-purple-600">
+          <div className="relative p-0.75 rounded-full bg-linear-to-tr from-yellow-400 via-red-500 to-purple-600">
             <div
-              className={`p-[2px] rounded-full
+              className={`p-0.5 rounded-full
                 ${theme.palette.mode === "light" ? "bg-white" : "bg-gray-900"}
                 `}
             >
-              <Avatar
-                alt={user?.name || "User"}
-                src={user?.avatar || undefined}
-                onClick={() => !open && handleDrawerOpenClose()}
-                className={`${!open && "cursor-pointer"}`}
-                // imgProps={{ loading: "lazy", draggable: false }}
-                sx={{
-                  width: open ? 75 : 38,
-                  height: open ? 75 : 38,
-                  transition: "all 0.3s ease-in-out",
-                  fontSize: open ? "3rem" : "1.5rem",
-                  // bgcolor: avatarBg,
-                  color: "#fff",
-                  fontWeight: 600,
-                }}
-              />
+              <SidebarAvatar open={open} handleDrawerOpenClose={handleDrawerOpenClose} user={user} />
             </div>
           </div>
           {/* Animate Height and Opacity */}
