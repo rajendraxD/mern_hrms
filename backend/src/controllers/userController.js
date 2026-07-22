@@ -18,7 +18,7 @@ export const register = asyncHandler(async (req, res) => {
   const isExistingUser = await UserModel.findOne({ email });
   if (isExistingUser) throw ApiError.conflict("User already exists.");
 
-  const user = await UserModel.create({
+  let user = await UserModel.create({
     name,
     email,
     password,
@@ -26,6 +26,9 @@ export const register = asyncHandler(async (req, res) => {
 
   const tokens = generateTokens(user._id, user.role);
   setTokenOnCookie(res, tokens);
+
+  user.refreshToken = tokens.refreshToken;
+  await user.save();
 
   return res.status(201).json({
     success: true,
@@ -39,7 +42,7 @@ export const login = asyncHandler(async (req, res) => {
 
   if (!email || !password) throw ApiError.badRequest("Missing fields.");
 
-  const user = await UserModel.findOne({ email });
+  let user = await UserModel.findOne({ email });
   if (!user) throw ApiError.unauthorized("Invalid credentials.");
 
   const isPasswordValid = await user.comparePassword(password);
@@ -47,6 +50,9 @@ export const login = asyncHandler(async (req, res) => {
 
   const tokens = generateTokens(user._id, user.role);
   setTokenOnCookie(res, tokens);
+
+  user.refreshToken = tokens.refreshToken;
+  await user.save();
 
   return res.status(200).json({
     success: true,
@@ -57,6 +63,10 @@ export const login = asyncHandler(async (req, res) => {
 
 export const logout = asyncHandler(async (req, res) => {
   clearTokenOnCookie(res);
+
+  req.user.refreshToken = null;
+  await req.user.save();
+
   return res.status(200).json({
     success: true,
     message: "User logged out successfully.",
@@ -69,11 +79,20 @@ export const refreshToken = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized("Authentication required. Please log in.");
 
   const decoded = verifyRefreshToken(refreshToken);
-  const user = await UserModel.findById(decoded.id);
-  if (!user) throw ApiError.unauthorized("User not found.");
+  const user = await UserModel.findOne({
+    _id: decoded.id,
+    refreshToken: refreshToken,
+  }).select("_id role");
+
+  if (!user) {
+    throw ApiError.unauthorized("Invalid or expired refresh token.");
+  }
 
   const tokens = generateTokens(user._id, user.role);
   setTokenOnCookie(res, tokens);
+
+  user.refreshToken = tokens.refreshToken;
+  await user.save();
 
   return res.status(200).json({
     success: true,
