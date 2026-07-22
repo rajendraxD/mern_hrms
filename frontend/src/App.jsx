@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/features/auth/login/Login.jsx";
 import { ProtectedRoute, PublicRoute } from "./utils/RouteProtected.jsx";
 import Dashboard from "./pages/features/dashboard/Dashboard.jsx";
+import DashboardLayout from "./components/layout/DashboardLayout";
 import Loading from "./components/common/Loading.jsx";
 import Box from "@mui/material/Box";
 import useAuth from "./hooks/useAuth.js";
@@ -39,8 +40,11 @@ export default function App() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route element={<DashboardLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
         </Route>
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
