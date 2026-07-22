@@ -1,43 +1,69 @@
-import { useEffect, useState } from 'react'
-import Button from '@mui/material/Button'
-import Card from '@mui/material/Card'
-import CardContent from '@mui/material/CardContent'
-import TextField from '@mui/material/TextField'
-import CircularProgress from '@mui/material/CircularProgress'
-import Alert from '@mui/material/Alert'
-import useAuth from '../../../../hooks/useAuth'
+import { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import TextField from "@mui/material/TextField";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
+import Typography from "@mui/material/Typography";
+import useAuth from "../../../../hooks/useAuth";
+import ThemeToggle from "../../../../components/common/ThemeToggle";
 
 export default function Login() {
-  const { login, loading, error, clearError, setError } = useAuth()
+  const { login, loading, error, clearError, setError } = useAuth();
   const [form, setForm] = useState({
-    email: 'rajendraxd1@gmail.com',
-    password: '111111',
-  })
+    email: "rajendraxd1@gmail.com",
+    password: "111111",
+  });
 
   useEffect(() => {
-    clearError()
-  }, [clearError])
+    clearError();
+  }, [clearError]);
 
   const handleOnChange = (e) => {
-    e.preventDefault()
-    const { name, value } = e.target
-    setForm({ ...form, [name]: value })
-  }
+    e.preventDefault();
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      await login(form)
+      await login(form);
     } catch (err) {
-      setError(err)
+      setError(err);
     }
-  }
+  };
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <Card sx={{ maxWidth: 400, width: '100%', mx: 2 }}>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        bgcolor: "background.default",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        position: "relative",
+      }}
+    >
+      <Box sx={{ position: "absolute", top: 16, right: 16 }}>
+        <ThemeToggle />
+      </Box>
+
+      <Card
+        sx={{
+          maxWidth: 400,
+          width: "100%",
+          mx: 2,
+          bgcolor: "background.paper",
+        }}
+      >
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <span className="text-2xl font-bold">Login</span>
+            <Typography variant="h5" fontWeight={700}>
+              Login
+            </Typography>
 
             {error && <Alert severity="error">{error}</Alert>}
 
@@ -70,11 +96,11 @@ export default function Login() {
               disabled={loading}
               startIcon={loading ? <CircularProgress size={20} /> : null}
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? "Logging in..." : "Login"}
             </Button>
           </form>
         </CardContent>
       </Card>
-    </div>
-  )
+    </Box>
+  );
 }
