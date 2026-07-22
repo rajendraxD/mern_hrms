@@ -1,66 +1,67 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import PeopleIcon from "@mui/icons-material/People";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import LuggageIcon from "@mui/icons-material/Luggage";
-import PaymentsIcon from "@mui/icons-material/Payments";
-
-const stats = [
-  { label: "Total Employees", value: "156", icon: <PeopleIcon />, color: "#4f46e5" },
-  { label: "Present Today", value: "142", icon: <CalendarMonthIcon />, color: "#0ea5e9" },
-  { label: "On Leave", value: "8", icon: <LuggageIcon />, color: "#f59e0b" },
-  { label: "Payroll (MTD)", value: "$284K", icon: <PaymentsIcon />, color: "#10b981" },
-];
+import useAuth from "../../../hooks/useAuth";
+import ThemeToggle from "../../../components/common/ThemeToggle";
 
 export default function Dashboard() {
-  return (
-    <Box>
-      <Typography variant="h5" fontWeight={700} sx={{ mb: 3 }}>
-        Dashboard Overview
-      </Typography>
+  const { logout } = useAuth();
 
-      <Grid container spacing={3}>
-        {stats.map((stat) => (
-          <Grid size={{ xs: 12, sm: 6, lg: 3 }} key={stat.label}>
-            <Paper
-              elevation={0}
-              sx={{
-                p: 3,
-                display: "flex",
-                alignItems: "center",
-                gap: 2,
-                border: 1,
-                borderColor: "divider",
-              }}
-            >
-              <Box
-                sx={{
-                  width: 48,
-                  height: 48,
-                  borderRadius: 2,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  bgcolor: `${stat.color}14`,
-                  color: stat.color,
-                }}
-              >
-                {stat.icon}
-              </Box>
-              <Box>
-                <Typography variant="h5" fontWeight={700}>
-                  {stat.value}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {stat.label}
-                </Typography>
-              </Box>
-            </Paper>
-          </Grid>
-        ))}
-      </Grid>
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    try {
+      await logout();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  return (
+    <Box
+      sx={{
+        minHeight: "100vh",
+        bgcolor: "background.default",
+        color: "text.primary",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 3,
+        px: 2,
+      }}
+    >
+      <Paper
+        elevation={2}
+        sx={{
+          p: 4,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 3,
+          minWidth: 320,
+        }}
+      >
+        <Typography variant="h4" fontWeight={700}>
+          Dashboard
+        </Typography>
+
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            Theme:
+          </Typography>
+          <ThemeToggle />
+        </Box>
+
+        <Button
+          variant="contained"
+          color="primary"
+          fullWidth
+          onClick={handleLogout}
+        >
+          Logout
+        </Button>
+      </Paper>
     </Box>
   );
 }
