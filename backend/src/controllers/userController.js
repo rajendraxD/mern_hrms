@@ -31,7 +31,6 @@ export const register = asyncHandler(async (req, res) => {
     success: true,
     message: "User registered successfully.",
     user,
-    accessToken: tokens.accessToken,
   });
 });
 
@@ -53,13 +52,11 @@ export const login = asyncHandler(async (req, res) => {
     success: true,
     message: "User logged in successfully.",
     user,
-    accessToken: tokens.accessToken,
   });
 });
 
 export const logout = asyncHandler(async (req, res) => {
   clearTokenOnCookie(res);
-  console.log(req.cookies.accessToken);
   return res.status(200).json({
     success: true,
     message: "User logged out successfully.",
@@ -81,7 +78,6 @@ export const refreshToken = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Token refreshed successfully.",
-    accessToken: tokens.accessToken,
   });
 });
 
