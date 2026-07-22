@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Button from '@mui/material/Button'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
@@ -9,19 +9,24 @@ import useAuth from '../../../../hooks/useAuth'
 
 export default function Login() {
   const { login, loading, error, clearError, setError } = useAuth()
+  const [form, setForm] = useState({
+    email: 'rajendraxd1@gmail.com',
+    password: '111111',
+  })
 
   useEffect(() => {
     clearError()
   }, [clearError])
 
+  const handleOnChange = (e) => {
+    e.preventDefault()
+    const { name, value } = e.target
+    setForm({ ...form, [name]: value })
+  }
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const formData = new FormData(e.target)
-    const email = formData.get('email')
-    const password = formData.get('password')
-
     try {
-      await login({ email, password })
+      await login(form)
     } catch (err) {
       setError(err)
     }
@@ -40,19 +45,21 @@ export default function Login() {
               label="Email"
               name="email"
               type="email"
+              value={form.email}
               required
               fullWidth
-              value={'rajendraxd1@gmail.com'}
+              onChange={handleOnChange}
             />
 
             <TextField
               label="Password"
               name="password"
               type="password"
+              value={form.password}
               required
               minLength={6}
               fullWidth
-              value={'111111'}
+              onChange={handleOnChange}
             />
 
             <Button
