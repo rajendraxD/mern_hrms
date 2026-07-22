@@ -5,7 +5,7 @@ import useAuth from "../hooks/useAuth";
 export const PublicRoute = () => {
     const { user, loading } = useAuth();
     if (loading) {
-        return <Loading />;
+        return <div className="flex justify-center items-center h-screen"><Loading /></div>
     }
     if (user) {
         return <Navigate to="/dashboard" replace />;
@@ -16,7 +16,7 @@ export const PublicRoute = () => {
 export const ProtectedRoute = () => {
     const { user, loading } = useAuth();
     if (loading) {
-        return <Loading />;
+        return <div className="flex justify-center items-center h-screen"><Loading /></div>
     }
     if (user) {
         return <Outlet />;
