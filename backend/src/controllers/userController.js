@@ -1,6 +1,5 @@
 import UserModel from "../models/UserModel.js";
 import { ApiError } from "../utils/ApiError.js";
-import { sendSuccess } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   clearTokenOnCookie,
@@ -31,7 +30,8 @@ export const register = asyncHandler(async (req, res) => {
   return res.status(201).json({
     success: true,
     message: "User registered successfully.",
-    data: { accessToken: tokens.accessToken },
+    user,
+    accessToken: tokens.accessToken,
   });
 });
 
@@ -49,10 +49,11 @@ export const login = asyncHandler(async (req, res) => {
   const tokens = generateTokens(user._id, user.role);
   setTokenOnCookie(res, tokens);
 
-  return sendSuccess(res, {
+  return res.status(200).json({
     success: true,
     message: "User logged in successfully.",
-    data: { accessToken: tokens.accessToken },
+    user,
+    accessToken: tokens.accessToken,
   });
 });
 
@@ -80,7 +81,7 @@ export const refreshToken = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "Token refreshed successfully.",
-    data: { accessToken: tokens.accessToken },
+    accessToken: tokens.accessToken,
   });
 });
 
@@ -88,6 +89,6 @@ export const profile = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     message: "User profile fetched successfully.",
-    data: req.user,
+    user: req.user,
   });
 });

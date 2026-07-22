@@ -46,8 +46,7 @@ export const generateTokens = (userId, role) => {
 };
 
 const cookieOptions = {
-  httpOnly: true,
-  secure,
+  secure: true,
   sameSite: secure ? "none" : "lax",
   path: "/",
 };
@@ -57,11 +56,13 @@ export const setTokenOnCookie = (res, token) => {
   res
     .cookie("accessToken", accessToken, {
       ...cookieOptions,
-      maxAge: env.jwt.accessExpiry,
+      httpOnly: false,
+      maxAge: Number(env.jwt.accessExpiry),
     })
     .cookie("refreshToken", refreshToken, {
       ...cookieOptions,
-      maxAge: env.jwt.refreshExpiry,
+      httpOnly: true,
+      maxAge: Number(env.jwt.refreshExpiry),
     });
 };
 
