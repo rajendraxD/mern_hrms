@@ -1,6 +1,12 @@
 import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login, logout, me, clearError } from "../store/slices/userSlice";
+import {
+  login,
+  logout,
+  me,
+  clearError,
+  setError,
+} from "../store/slices/userSlice";
 
 const useAuth = () => {
   const dispatch = useDispatch();
@@ -28,6 +34,13 @@ const useAuth = () => {
     dispatch(clearError());
   }, [dispatch]);
 
+  const setErrorMessage = useCallback(
+    (message) => {
+      dispatch(setError(message));
+    },
+    [dispatch],
+  );
+
   return {
     // state
     user,
@@ -42,6 +55,7 @@ const useAuth = () => {
     logout: logoutUser,
     me: fetchCurrentUser,
     clearError: clearAuthError,
+    setError: setErrorMessage,
   };
 };
 

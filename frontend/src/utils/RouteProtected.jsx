@@ -4,9 +4,9 @@ import useAuth from "../hooks/useAuth";
 // import Loading from "../components/UI/Loading";
 export const PublicRoute = () => {
     const { user, loading } = useAuth();
-    if (loading) {
-        return <div className="flex justify-center items-center h-screen"><Loading /></div>
-    }
+    // if (loading) {
+    //     return <div className="flex justify-center items-center h-screen"><Loading /></div>
+    // }
     if (user) {
         return <Navigate to="/dashboard" replace />;
     } else {

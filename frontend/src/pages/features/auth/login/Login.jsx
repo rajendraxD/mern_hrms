@@ -1,52 +1,71 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import Button from '@mui/material/Button'
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
+import Card from '@mui/material/Card'
+import CardContent from '@mui/material/CardContent'
 import TextField from '@mui/material/TextField'
-import useAuth from '../../../../hooks/useAuth';
+import CircularProgress from '@mui/material/CircularProgress'
+import Alert from '@mui/material/Alert'
+import useAuth from '../../../../hooks/useAuth'
 
 export default function Login() {
-  const { login } = useAuth();
-  const [form, setForm] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
+  const { login, loading, error, clearError, setError } = useAuth()
 
-  const handleInputChange = (e) => {
-    e.preventDefault();
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  }
+  useEffect(() => {
+    clearError()
+  }, [clearError])
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
+    const formData = new FormData(e.target)
+    const email = formData.get('email')
+    const password = formData.get('password')
+
     try {
-      await login(form);
-    } catch (error) {
-      console.log(error);
+      await login({ email, password })
+    } catch (err) {
+      setError(err)
     }
-  };
+  }
+
   return (
-    <div className='flex justify-center items-center h-screen'>
-      <Card sx={{ maxWidth: 300 }}>
+    <div className="flex justify-center items-center h-screen">
+      <Card sx={{ maxWidth: 400, width: '100%', mx: 2 }}>
         <CardContent>
-          <div className='flex flex-col gap-2'>
-            <span className='text-2xl font-bold'>Login</span>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <span className="text-2xl font-bold">Login</span>
+
+            {error && <Alert severity="error">{error}</Alert>}
 
             <TextField
-              value={form.email}
-              onChange={handleInputChange}
+              label="Email"
               name="email"
-              placeholder="Email"
+              type="email"
+              required
+              fullWidth
+              value={'rajendraxd1@gmail.com'}
             />
 
             <TextField
-              value={form.password}
-              onChange={handleInputChange}
+              label="Password"
               name="password"
-              placeholder="Password"
               type="password"
+              required
+              minLength={6}
+              fullWidth
+              value={'111111'}
             />
-            <Button variant="contained" color="primary" onClick={handleSubmit} fullWidth>
-              Login
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              disabled={loading}
+              startIcon={loading ? <CircularProgress size={20} /> : null}
+            >
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
-          </div>
+          </form>
         </CardContent>
       </Card>
     </div>
