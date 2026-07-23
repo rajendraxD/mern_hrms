@@ -19,55 +19,65 @@ import { login } from "../../../../store/slices/userSlice";
 
 export default function Login() {
   const dispatch = useDispatch();
-  const { loading, clearError } = useSelector(state => state.user);
+  const { loading } = useSelector(state => state.user);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState({});
-
-  // Clear Redux error when component mounts
-  useEffect(() => {
-    clearError
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // ── Handlers ──────────────────────────────────────────
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (fieldErrors[name]) {
-      setFieldErrors((prev) => {
-        const next = { ...prev };
-        delete next[name];
-        return next;
-      });
+    setFormError(null)
+    let { name, value } = e.target;
+    if (name === "email") {
+      value = value.toLowerCase();
     }
-    // if (error) clearError();
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: null,
+      }));
+    }
   };
 
-  // const validate = () => {
-  //   const errs = {};
-  //   if (!formData.email.trim()) {
-  //     errs.email = "Email is required";
-  //   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-  //     errs.email = "Please enter a valid email address";
-  //   }
-  //   if (!formData.password) {
-  //     errs.password = "Password is required";
-  //   }
-  //   setFieldErrors(errs);
-  //   return Object.keys(errs).length === 0;
-  // };
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  const validateForm = (data) => {
+    const errors = {};
+    if (!data.email || !validateEmail(data.email)) {
+      errors.email = "Valid email is required";
+    }
+    if (!data.password || data.password.length < 6) {
+      errors.password = "Password must be at least 6 characters";
+    }
+    if (data.password.length > 20) {
+      errors.password = "Password must be at most 20 characters";
+    }
+    return Object.keys(errors).length > 0 ? errors : null;
+  };
+
+  const [formError, setFormError] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // if (!validate()) return;
+
+    const validationErrors = validateForm(formData);
+    if (validationErrors) {
+      setErrors(validationErrors);
+      return;
+    }
+    setErrors({});
+    setFormError(null);
+
     try {
-      await dispatch(login(formData));
-      // navigate("/dashboard", { replace: true });
-    } catch {
-      // error is handled by Redux state
-      // console.log(error);
+      await dispatch(login(formData)).unwrap();
+    } catch (err) {
+      const message = typeof err === "string" ? err : "Login failed";
+      setFormError(message);
     }
   };
 
@@ -131,8 +141,13 @@ export default function Login() {
               </Alert>
             )}
           </div> */}
+          {/* Inline error */}
+          {formError && (
+            <div className="mb-3 p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded">
+              {formError}
+            </div>
+          )}
 
-          {/* ── Form ──────────────────────────────────── */}
           <form onSubmit={handleSubmit} noValidate>
             {/* Email */}
             <div >
@@ -145,8 +160,8 @@ export default function Login() {
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange}
-                error={!!fieldErrors.email}
-                helperText={fieldErrors.email || " "}
+                error={!!errors.email}
+                helperText={errors.email || " "}
                 size="medium"
                 slotProps={{
                   input: {
@@ -173,8 +188,8 @@ export default function Login() {
                 value={formData.password}
                 placeholder="Password"
                 onChange={handleChange}
-                error={!!fieldErrors.password}
-                helperText={fieldErrors.password || " "}
+                error={!!errors.password}
+                helperText={errors.password || " "}
                 size="medium"
                 slotProps={{
                   input: {
@@ -211,7 +226,6 @@ export default function Login() {
 
             {/* Remember Me & Forgot Password */}
             <div
-
               className="flex justify-between items-center mb-5 select-none"
             >
               <FormControlLabel
