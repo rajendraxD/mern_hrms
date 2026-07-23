@@ -8,6 +8,7 @@ import {
   verifyRefreshToken,
 } from "../utils/token.js";
 import bcrypt from "bcryptjs";
+import { validationResult } from "express-validator";
 
 export const register = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
@@ -38,6 +39,13 @@ export const register = asyncHandler(async (req, res) => {
 });
 
 export const login = asyncHandler(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((error) => error.msg);
+    // return next(new ErrorHandler(errorMessages, 400));
+    throw ApiError.validation(errorMessages);
+  }
+
   const { email, password } = req.body;
 
   if (!email || !password) throw ApiError.badRequest("Missing fields.");

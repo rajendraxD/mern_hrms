@@ -22,4 +22,7 @@ export class ApiError extends Error {
   static conflict(msg = 'Conflict') {
     return new ApiError(409, msg);
   }
+  static validation(msg = 'Validation failed') {
+    return new ApiError(422, msg);
+  }
 }

@@ -1,8 +1,8 @@
+import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
-import useAuth from "../hooks/useAuth";
 
 export const PublicRoute = () => {
-  const { user } = useAuth();
+  const { user } = useSelector(state => state.user)
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -10,8 +10,8 @@ export const PublicRoute = () => {
 };
 
 export const ProtectedRoute = () => {
-  const { user,loading } = useAuth();
-  if(loading) return <h2>Loading...</h2>
+  const { user, loading } = useSelector(state => state.user)
+  if (loading) return <h2>Loading...</h2>
   if (user) {
     return <Outlet />;
   }
