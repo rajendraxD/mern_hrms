@@ -1,77 +1,79 @@
+import { useCallback, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import SettingsBrightnessIcon from "@mui/icons-material/SettingsBrightness";
-import CheckIcon from "@mui/icons-material/Check";
-import { useState } from "react";
-import { setMode } from "../../store/slices/themeSlice";
+import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
+import { setMode } from "../../store/slices/themeModeSlice";
 
-const options = [
-  { value: "light", label: "Light", icon: <LightModeIcon fontSize="small" /> },
-  { value: "dark", label: "Dark", icon: <DarkModeIcon fontSize="small" /> },
-  {
-    value: "system",
-    label: "System",
-    icon: <SettingsBrightnessIcon fontSize="small" />,
-  },
-];
-
-const modeIcons = {
-  light: <LightModeIcon />,
-  dark: <DarkModeIcon />,
-  system: <SettingsBrightnessIcon />,
-};
-
-export default function ThemeToggle() {
+/**
+ * ThemeToggle — switches between light, dark, and system mode.
+ * Uses the Redux theme slice for state management and persistence.
+ */
+const ThemeToggle = ({ iconButtonProps, tooltipProps }) => {
   const dispatch = useDispatch();
-  const { mode } = useSelector((state) => state.theme);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  const mode = useSelector((state) => state.theme.mode);
+  const resolved = useSelector((state) => state.theme.resolved);
 
-  const handleClick = (event) => setAnchorEl(event.currentTarget);
-  const handleClose = () => setAnchorEl(null);
-  const handleSelect = (value) => {
-    dispatch(setMode(value));
-    handleClose();
-  };
+  // Cycle: light → dark → system → light
+  const nextMode = useMemo(() => {
+    const order = ["light", "dark", "system"];
+    const idx = order.indexOf(mode);
+    return order[(idx + 1) % order.length];
+  }, [mode]);
+
+  const handleToggle = useCallback(() => {
+    dispatch(setMode(nextMode));
+  }, [dispatch, nextMode]);
+
+  const icon = useMemo(() => {
+    if (mode === "system") {
+      // Show resolved theme icon when in system mode
+      if (resolved === "dark") {
+        return <DarkModeIcon fontSize="small" />;
+      }
+      return <LightModeIcon fontSize="small" />;
+    }
+    if (mode === "dark") return <DarkModeIcon fontSize="small" />;
+    return <LightModeIcon fontSize="small" />;
+  }, [mode, resolved]);
+
+  const tooltipTitle = useMemo(() => {
+    if (mode === "system") return `System (${resolved}) — Click for light`;
+    if (mode === "light") return "Light — Click for dark";
+    return "Dark — Click for system";
+  }, [mode, resolved]);
 
   return (
-    <>
-      <Tooltip title="Toggle theme">
-        <IconButton onClick={handleClick} color="inherit" size="small">
-          {modeIcons[mode]}
-        </IconButton>
-      </Tooltip>
-      <Menu
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-        slotProps={{
-          paper: {
-            sx: { minWidth: 160, mt: 1 },
+    <Tooltip title={tooltipTitle} arrow {...tooltipProps}>
+      <IconButton
+        onClick={handleToggle}
+        aria-label="Toggle theme"
+        color="inherit"
+        sx={{
+          transition: "transform 0.2s ease",
+          "&:hover": {
+            transform: "rotate(15deg)",
           },
         }}
+        {...iconButtonProps}
       >
-        {options.map((opt) => (
-          <MenuItem
-            key={opt.value}
-            selected={mode === opt.value}
-            onClick={() => handleSelect(opt.value)}
-          >
-            <ListItemIcon>{opt.icon}</ListItemIcon>
-            <ListItemText>{opt.label}</ListItemText>
-            {mode === opt.value && (
-              <CheckIcon fontSize="small" sx={{ ml: 1 }} />
-            )}
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
+        {mode === "system" && (
+          <BrightnessAutoIcon
+            sx={{
+              fontSize: 18,
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              opacity: 0.6,
+            }}
+          />
+        )}
+        {icon}
+      </IconButton>
+    </Tooltip>
   );
-}
+};
+
+export default ThemeToggle;
