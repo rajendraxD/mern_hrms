@@ -2,7 +2,7 @@ import axios from "axios";
 
 const API_URL =
   (import.meta.env.VITE_API_URL || "http://localhost:5000") + "/api";
-const REFRESH_ENDPOINT = API_URL+"/user/refreshToken";
+const REFRESH_ENDPOINT = "/user/refreshToken";
 const LOGIN_ROUTE = "/login";
 
 // Define once at module level
