@@ -6,6 +6,7 @@ const api = axios.create({
   baseURL: API_URL,
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
+  timeout: 10000,
 });
 const REFRESH_URL = "/user/refreshToken";
 
@@ -40,9 +41,20 @@ api.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
-    const allowedPaths = ["/login", "/logout", "/forgotPassword"];
+    const NO_REFRESH_ENDPOINTS = [
+      "/user/login",
+      "/user/logout",
+      "/user/refreshToken",
+    ];
     const isRefreshRequest = originalRequest.url?.includes(REFRESH_URL);
-    const isExcludedPage = allowedPaths.includes(window.location.pathname);
+    const isExcludedPage = NO_REFRESH_ENDPOINTS.includes(
+      window.location.pathname,
+    );
+
+    if (!error.response) {
+      error.message = "Network Error. Please check your internet connection.";
+      return Promise.reject(error);
+    }
 
     if (
       error.response?.status === 401 &&
@@ -75,6 +87,7 @@ api.interceptors.response.use(
         if (window.location.pathname !== "/login") {
           window.location.href = "/login";
         }
+
         return Promise.reject(err);
       } finally {
         isRefreshing = false;

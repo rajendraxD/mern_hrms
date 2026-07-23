@@ -5,13 +5,13 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import TextField from "@mui/material/TextField";
 import CircularProgress from "@mui/material/CircularProgress";
-import Alert from "@mui/material/Alert";
+// import Alert from "@mui/material/Alert";
 import Typography from "@mui/material/Typography";
 import useAuth from "../../../../hooks/useAuth";
 import ThemeToggle from "../../../../components/common/ThemeToggle";
 
 export default function Login() {
-  const { login, loading, error, clearError, setError } = useAuth();
+  const { login, loading, clearError, setError } = useAuth();
   const [form, setForm] = useState({
     email: "rajendraxd1@gmail.com",
     password: "111111",
@@ -65,7 +65,7 @@ export default function Login() {
               Login
             </Typography>
 
-            {error && <Alert severity="error">{error}</Alert>}
+            {/* {error && <Alert severity="error">{error}</Alert>} */}
 
             <TextField
               label="Email"
