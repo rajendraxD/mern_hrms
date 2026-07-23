@@ -1,10 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import Box from "@mui/material/Box";
-import Loading from "../components/common/Loading";
 import useAuth from "../hooks/useAuth";
 
 export const PublicRoute = () => {
-  const { user } = useAuth();
+  const { user,loading } = useAuth();
+  if(loading) return <h2>Loading...</h2>
   if (user) {
     return <Navigate to="/dashboard" replace />;
   }
@@ -12,22 +11,8 @@ export const PublicRoute = () => {
 };
 
 export const ProtectedRoute = () => {
-  const { user, loading } = useAuth();
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          bgcolor: "background.default",
-        }}
-      >
-        <Loading />
-      </Box>
-    );
-  }
+  const { user,loading } = useAuth();
+  if(loading) return <h2>Loading...</h2>
   if (user) {
     return <Outlet />;
   }
