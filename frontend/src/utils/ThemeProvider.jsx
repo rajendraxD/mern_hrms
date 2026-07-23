@@ -81,6 +81,13 @@ const MuiThemeProvider = ({ children }) => {
               },
             },
           },
+          MuiAlert: {
+            styleOverrides: {
+              root: {
+                borderRadius: 5,
+              },
+            },
+          },
         },
       }),
     [resolved]

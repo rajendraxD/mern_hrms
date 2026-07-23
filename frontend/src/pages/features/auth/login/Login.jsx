@@ -102,7 +102,7 @@ export default function Login() {
           </div>
 
           {error && (
-            <Alert severity="error" sx={{ mb: 3 }} onClose={clearError}>
+            <Alert severity="error" sx={{ mb: 1 }} onClose={clearError}>
               {error}
             </Alert>
           )}
