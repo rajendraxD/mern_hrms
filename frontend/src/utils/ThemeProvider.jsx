@@ -32,31 +32,52 @@ const MuiThemeProvider = ({ children }) => {
           mode: resolved,
           ...(resolved === "dark"
             ? {
-                background: {
-                  default: "#0f172a", // slate-900
-                  paper: "#1e293b", // slate-800
-                },
-                text: {
-                  primary: "#f1f5f9", // slate-100
-                  secondary: "#94a3b8", // slate-400
-                },
-              }
+              background: {
+                default: "#0f172a", // slate-900
+                paper: "#1e293b", // slate-800
+              },
+              text: {
+                primary: "#f1f5f9", // slate-100
+                secondary: "#94a3b8", // slate-400
+              },
+            }
             : {
-                background: {
-                  default: "#f8fafc", // slate-50
-                  paper: "#ffffff",
-                },
-                text: {
-                  primary: "#0f172a", // slate-900
-                  secondary: "#475569", // slate-600
-                },
-              }),
+              background: {
+                default: "#f8fafc", // slate-50
+                paper: "#ffffff",
+              },
+              text: {
+                primary: "#0f172a", // slate-900
+                secondary: "#475569", // slate-600
+              },
+            }),
         },
         components: {
           MuiButton: {
             styleOverrides: {
               root: {
                 borderRadius: 5,
+              },
+            },
+          },
+          MuiTextField: {
+            styleOverrides: {
+              root: {
+                "& .MuiInputBase-root": {
+                  borderRadius: 5,
+                },
+              },
+            },
+          },
+          MuiCard: {
+            styleOverrides: {
+              root: {
+                // "& .MuiCardHeader-root": {
+                //   borderRadius: 1,
+                // },
+                // "& .MuiCardContent-root": {
+                //   borderRadius: 1,
+                // },
               },
             },
           },
