@@ -1,5 +1,6 @@
 // src/api/axios.js
 import axios from "axios";
+import { API_ENDPOINTS, ROUTES } from "../utils/constants";
 
 const API_BASE_URL =
   (import.meta.env.VITE_API_URL || "http://localhost:5000/") + "/api";
@@ -8,6 +9,11 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true, // Send httpOnly cookies
 });
+
+export const get = (url, params) => api.get(url, { params });
+export const post = (url, data) => api.post(url, data);
+export const put = (url, data) => api.put(url, data);
+export const del = (url) => api.delete(url);
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -31,10 +37,10 @@ api.interceptors.response.use(
 
     // Skip refresh for these endpoints
     const skipEndpoints = [
-      "/user/login",
-      "/user/register",
-      "/user/refreshToken",
-      "/user/logout",
+      API_ENDPOINTS.LOGIN,
+      API_ENDPOINTS.REGISTER,
+      API_ENDPOINTS.REFRESH_TOKEN,
+      API_ENDPOINTS.LOGOUT,
     ];
     if (skipEndpoints.some((url) => originalRequest.url?.includes(url))) {
       return Promise.reject(error);
@@ -53,15 +59,15 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await api.get("/user/refreshToken");
+        await api.get(API_ENDPOINTS.REFRESH_TOKEN);
         processQueue(null);
         return api(originalRequest); // Retry
       } catch (refreshError) {
         processQueue(refreshError);
 
         // Optional: Redirect to login if not already there
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
+        if (window.location.pathname !== ROUTES.LOGIN) {
+          window.location.href = ROUTES.LOGIN;
         }
 
         return Promise.reject(refreshError);

@@ -16,7 +16,7 @@ import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login } from "../../../../store/slices/userSlice";
 
 export default function Login() {
