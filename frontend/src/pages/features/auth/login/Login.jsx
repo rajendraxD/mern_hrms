@@ -7,6 +7,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import LockOutlined from "@mui/icons-material/LockOutlined";
 import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
+import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import Button from '@mui/material/Button'
 import Divider from "@mui/material/Divider";
@@ -53,8 +54,16 @@ export default function Login() {
         } transition-all duration-50`}
       >
 
-        {/* Shield Background Image */}
-        <ShieldOutlined className="absolute text-gray-700/10 dark:text-gray-600/15 select-none pointer-events-none sm:hidden" sx={{ fontSize: 450, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+        {/* Shield Watermarks */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
+          animate={{ y: [0, -6, 0], scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
+          transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
+        >
+          <ShieldOutlined className="text-gray-700/10 dark:text-gray-600/15" sx={{ fontSize: 400 }} />
+        </motion.div>
+
+
 
         {/* Google Login Button */}
         <Button variant="outlined" startIcon={<FcGoogle />} size="large" fullWidth disabled>
@@ -169,7 +178,6 @@ export default function Login() {
           >
             Contact Support
           </Link>
-
         </div>
       </form>
     </div>
