@@ -46,7 +46,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      await dispatch(login(formData)).unwrap().then(() => console.log('ok'));
+      await dispatch(login(formData)).unwrap()
     } catch (err) {
       console.log(err);
     }
@@ -155,7 +155,7 @@ export default function Login() {
             }}
           />
         </div>
-        <Button variant="contained" color="primary" type="submit" size="large" loading={loading} >
+        <Button variant="contained" color="primary" type="submit" size="large" disabled={loading} >
           {"Login"}
         </Button>
 

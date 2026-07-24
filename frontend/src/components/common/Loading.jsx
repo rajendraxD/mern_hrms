@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 
 export default function Loading() {
   return (
-    <Box sx={{ display: "flex", position: "relative" }}>
+    <Box className="flex items-center justify-center h-screen">
       <CircularProgress aria-label="Loading…" />
     </Box>
   );

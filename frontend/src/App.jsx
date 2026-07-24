@@ -6,7 +6,7 @@ import ForgotPassword from "./pages/features/auth/forgotPassword/forgotPassword.
 import { ROUTES } from "./utils/constants.js";
 import { me } from "./store/slices/userSlice.js";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const AutoLogin = ({ children }) => {
   const dispatch = useDispatch();
@@ -15,11 +15,11 @@ const AutoLogin = ({ children }) => {
     async function fetchUser() {
       try {
         await dispatch(me()).unwrap();
-      } catch (err) {
-        console.log(err);
+      } catch {
+        //Manage by redux
+        // console.log(err);
       }
     }
-
     fetchUser();
   }, [dispatch])
 
@@ -27,7 +27,6 @@ const AutoLogin = ({ children }) => {
 
 }
 export default function App() {
-
   return (
     <BrowserRouter>
       <AutoLogin>

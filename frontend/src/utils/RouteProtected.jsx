@@ -4,8 +4,8 @@ import { ROUTES } from "./constants";
 import Loading from "../components/common/Loading";
 
 export const PublicRoute = () => {
-  const { isAuthenticated, user, initialLoading } = useSelector(state => state.user)
-  if (initialLoading) return <Loading />;
+  const { isAuthenticated, user, loading } = useSelector(state => state.user)
+  if (loading) return <Loading />;
   if (isAuthenticated && user) {
     return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
