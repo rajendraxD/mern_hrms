@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return (
-    <motion.div className="flex flex-col items-center justify-center h-screen"
+    <motion.div className="flex flex-col items-center justify-center min-h-screen"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
