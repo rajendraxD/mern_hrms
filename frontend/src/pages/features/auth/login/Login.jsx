@@ -49,7 +49,7 @@ export default function Login() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 1, ease: "easeInOut" }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
     >
 
       <form onSubmit={handleSubmit} noValidate className={`relative flex flex-col gap-4 overflow-hidden
