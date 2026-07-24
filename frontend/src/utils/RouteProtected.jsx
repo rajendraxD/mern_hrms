@@ -1,11 +1,12 @@
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
+import { ROUTES } from "./constants";
 
 export const PublicRoute = () => {
   const { isAuthenticated, user, initialLoading } = useSelector(state => state.user)
   if (initialLoading) return null;
   if (isAuthenticated && user) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to={ROUTES.DASHBOARD} replace />;
   }
   return <Outlet />;
 };
@@ -17,5 +18,5 @@ export const ProtectedRoute = () => {
   if (isAuthenticated && user) {
     return <Outlet />;
   }
-  return <Navigate to="/login" replace />;
+  return <Navigate to={ROUTES.LOGIN} replace />;
 };

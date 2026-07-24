@@ -1,12 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "../../api/axios";
+import { API_ENDPOINTS } from "../../utils/constants";
 
 const getErrorMessage = (error) =>
   error?.response?.data?.message || error?.message || "Something went wrong";
 
 export const login = createAsyncThunk("login", async (data, thunkAPI) => {
   try {
-    const res = await api.post("/user/login", data);
+    const res = await api.post(API_ENDPOINTS.LOGIN, data);
     return res.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
@@ -17,7 +18,7 @@ export const login = createAsyncThunk("login", async (data, thunkAPI) => {
 export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
   const { dispatch } = thunkAPI;
   try {
-    const res = await api.post("/user/logout");
+    const res = await api.post(API_ENDPOINTS.LOGOUT);
     return res.data;
   } catch (error) {
     // Token might be expired, THAT'S FINE. We still want to clear local state.
@@ -25,12 +26,12 @@ export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
   } finally {
     // Dispatch reset regardless of API success
-     dispatch(resetAuth());
+    dispatch(resetAuth());
   }
 });
 export const me = createAsyncThunk("me", async (_, thunkAPI) => {
   try {
-    const res = await api.get("/user/me");
+    const res = await api.get(API_ENDPOINTS.ME);
     return res.data;
   } catch (error) {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
@@ -120,7 +121,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, setUser, setError, resetAuth } =
-  userSlice.actions;
+export const { clearError, setUser, setError, resetAuth } = userSlice.actions;
 
 export default userSlice.reducer;

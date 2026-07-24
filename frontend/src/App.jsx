@@ -3,21 +3,24 @@ import Login from "./pages/features/auth/login/Login.jsx";
 import { ProtectedRoute, PublicRoute } from "./utils/RouteProtected.jsx";
 import Dashboard from "./pages/features/dashboard/Dashboard.jsx";
 import ForgotPassword from "./pages/features/auth/forgotPassword/forgotPassword.jsx";
+import { ROUTES } from "./utils/constants.js";
 export default function App() {
 
   return (
     <BrowserRouter>
       <Routes>
         {/* <Route element={<PublicRoute />}> */}
-        <Route path="/" element={<Navigate to="/login" />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/forgotPassword" element={<ForgotPassword />} />
+        <Route path="/" element={<Navigate to={ROUTES.LOGIN} />} />
+        <Route path={ROUTES.LOGIN} element={<Login />} />
+        <Route path={ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
         {/* </Route> */}
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Navigate to="/dashboard" />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<Navigate to={ROUTES.DASHBOARD} />} />
+          <Route path={ROUTES.DASHBOARD} element={<Dashboard />} />
         </Route>
+
+        <Route path="*" element={<h1 className="flex justify-center items-center h-screen md:text-4xl transition-all duration-500 ">404 | Page Not Found</h1>} />
       </Routes>
     </BrowserRouter>
   );

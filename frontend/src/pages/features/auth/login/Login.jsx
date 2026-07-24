@@ -14,11 +14,18 @@ import Divider from "@mui/material/Divider";
 import { useIsMobile } from "../../../../hooks/useMobile";
 import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
+import { useNavigate } from "react-router-dom";
+import { ROUTES } from "../../../../utils/constants";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../../../store/slices/userSlice";
 
 export default function Login() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
   const [showPassword, setShowPassword] = useState(false);
   const isMobile = useIsMobile();
+  const dispatch = useDispatch();
+  // const { login } = useSelector(state => state.user)
 
   // ── Handlers ──────────────────────────────────────────
   const handleChange = (e) => {
@@ -38,7 +45,7 @@ export default function Login() {
     e.preventDefault();
 
     try {
-      // await loginUser(formData).unwrap();
+      await dispatch(login(formData)).unwrap().then(() => console.log('ok'));
     } catch (err) {
       console.log(err);
     }
@@ -71,7 +78,7 @@ export default function Login() {
 
 
         {/* Google Login Button */}
-        <Button variant="outlined" startIcon={<FcGoogle />} size="large" fullWidth disabled>
+        <Button variant="outlined" startIcon={<FcGoogle />} size="large" color="inherit" fullWidth disabled>
           Log in with Google
         </Button>
 
@@ -157,6 +164,7 @@ export default function Login() {
           <Link
             component="button"
             variant="body2"
+            color="inherit"
             onClick={() => {
               console.info("I'm a button.");
             }}
@@ -166,15 +174,19 @@ export default function Login() {
           <Link
             component="button"
             variant="body2"
-            onClick={() => {
-              window.location.href = "/forgotPassword";
-            }}
+            color="inherit"
+            onClick={
+              (e) => {
+                e.preventDefault();
+                navigate(ROUTES.FORGOT_PASSWORD);
+              }}
           >
             Forgot Password?
           </Link>
           <Link
             component="button"
             variant="body2"
+            color="inherit"
             onClick={() => {
               console.info("I'm a button.");
             }}
@@ -183,6 +195,6 @@ export default function Login() {
           </Link>
         </div>
       </form>
-    </motion.div>
+    </motion.div >
   );
 }
