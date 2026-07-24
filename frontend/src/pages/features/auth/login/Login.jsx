@@ -45,7 +45,12 @@ export default function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <motion.div className="flex flex-col items-center justify-center h-screen"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1, ease: "easeInOut" }}
+    >
 
       <form onSubmit={handleSubmit} noValidate className={`relative flex flex-col gap-4 overflow-hidden
         ${isMobile
@@ -156,9 +161,8 @@ export default function Login() {
               console.info("I'm a button.");
             }}
           >
-            Create an account
+            Don't have an account?
           </Link>
-          <Divider orientation="vertical" variant="middle" flexItem />
           <Link
             component="button"
             variant="body2"
@@ -168,7 +172,6 @@ export default function Login() {
           >
             Forgot Password?
           </Link>
-          <Divider orientation="vertical" variant="middle" flexItem />
           <Link
             component="button"
             variant="body2"
@@ -180,6 +183,6 @@ export default function Login() {
           </Link>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 }
