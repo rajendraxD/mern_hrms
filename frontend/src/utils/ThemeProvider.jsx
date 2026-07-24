@@ -57,6 +57,7 @@ const MuiThemeProvider = ({ children }) => {
             styleOverrides: {
               root: {
                 borderRadius: 5,
+                textTransform: "none",
               },
             },
           },
@@ -64,7 +65,7 @@ const MuiThemeProvider = ({ children }) => {
             styleOverrides: {
               root: {
                 "& .MuiInputBase-root": {
-                  borderRadius: 5,
+                  borderRadius: 10,
                 },
               },
             },

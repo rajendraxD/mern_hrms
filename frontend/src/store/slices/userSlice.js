@@ -12,12 +12,20 @@ export const login = createAsyncThunk("login", async (data, thunkAPI) => {
     return thunkAPI.rejectWithValue(getErrorMessage(error));
   }
 });
+
+// Logout: FORGIVING - Always clears state, even if API fails
 export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
+  const { dispatch } = thunkAPI;
   try {
     const res = await api.post("/user/logout");
     return res.data;
   } catch (error) {
+    // Token might be expired, THAT'S FINE. We still want to clear local state.
+    console.error("Logout API failed, clearing state anyway:", error.message);
     return thunkAPI.rejectWithValue(getErrorMessage(error));
+  } finally {
+    // Dispatch reset regardless of API success
+     dispatch(resetAuth());
   }
 });
 export const me = createAsyncThunk("me", async (_, thunkAPI) => {
@@ -33,6 +41,7 @@ const initialState = {
   user: null,
   loading: false,
   initialLoading: true,
+  isAuthenticated: false,
   error: null,
 };
 const userSlice = createSlice({
@@ -48,19 +57,28 @@ const userSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    resetAuth(state) {
+      state.user = null;
+      state.isAuthenticated = false;
+      state.loading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.user = null;
       })
       .addCase(login.fulfilled, (state, action) => {
         state.loading = false;
+        state.isAuthenticated = true;
         state.user = action.payload.user;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
         state.error = action.payload;
       });
 
@@ -72,9 +90,12 @@ const userSlice = createSlice({
       .addCase(logout.fulfilled, (state) => {
         state.loading = false;
         state.user = null;
+        state.isAuthenticated = false;
       })
       .addCase(logout.rejected, (state, action) => {
         state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
         state.error = action.payload;
       });
 
@@ -86,17 +107,20 @@ const userSlice = createSlice({
       .addCase(me.fulfilled, (state, action) => {
         state.loading = false;
         state.initialLoading = false;
+        state.isAuthenticated = true;
         state.user = action.payload.user;
       })
       .addCase(me.rejected, (state, action) => {
         state.loading = false;
         state.initialLoading = false;
+        state.isAuthenticated = false;
+        state.user = null;
         state.error = action.payload;
       });
   },
 });
 
-export const { user, clearError, loading, setUser, setError } =
+export const { clearError, setUser, setError, resetAuth } =
   userSlice.actions;
 
 export default userSlice.reducer;
