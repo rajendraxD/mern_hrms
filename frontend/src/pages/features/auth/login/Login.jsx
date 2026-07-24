@@ -30,7 +30,6 @@ export default function Login() {
 
   // ── Handlers ──────────────────────────────────────────
   const handleChange = (e) => {
-    e.preventDefault();
     let { name, value } = e.target;
     if (name === "email") {
       value = value.toLowerCase();
@@ -63,8 +62,8 @@ export default function Login() {
       <form onSubmit={handleSubmit} noValidate className={`relative flex flex-col gap-4 overflow-hidden
         ${isMobile
           ? "w-full p-5!"
-          : "w-100 p-10!"
-        } transition-all duration-50`}
+          : "w-96 p-10!"
+        } transition-all duration-75`}
       >
 
         {/* Shield Watermarks */}
@@ -93,7 +92,7 @@ export default function Login() {
             type="email"
             autoComplete="email"
             autoFocus
-            placeholder="Email"
+            label="Email"
             value={formData.email}
             onChange={handleChange}
             size="medium"
@@ -120,7 +119,7 @@ export default function Login() {
             type={showPassword ? "text" : "password"}
             autoComplete="current-password"
             value={formData.password}
-            placeholder="Password"
+            label="Password"
             onChange={handleChange}
             size="medium"
             slotProps={{

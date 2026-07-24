@@ -2,18 +2,20 @@
 import axios from "axios";
 import { API_ENDPOINTS, ROUTES } from "../utils/constants";
 
-const API_BASE_URL =
-  (import.meta.env.VITE_API_URL || "http://localhost:5000/") + "/api";
+const API_BASE_URL = `${
+  import.meta.env.VITE_API_URL || "http://localhost:5000"
+  }/api`;
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  withCredentials: true, // Send httpOnly cookies
+  withCredentials: true,
+  timeout: 15000,
 });
 
 export const get = (url, params) => api.get(url, { params });
 export const post = (url, data) => api.post(url, data);
 export const put = (url, data) => api.put(url, data);
-export const del = (url) => api.delete(url);
+export const del = (url, config) => api.delete(url, config);
 
 let isRefreshing = false;
 let failedQueue = [];
@@ -35,18 +37,20 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Skip refresh for these endpoints
     const skipEndpoints = [
       API_ENDPOINTS.LOGIN,
       API_ENDPOINTS.REGISTER,
       API_ENDPOINTS.REFRESH_TOKEN,
       API_ENDPOINTS.LOGOUT,
     ];
-    if (skipEndpoints.some((url) => originalRequest.url?.includes(url))) {
+    if (skipEndpoints.some((url) => originalRequest.url?.endsWith(url))) {
       return Promise.reject(error);
     }
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    if (
+      (error.response?.status === 401 || error.response?.status === 403) &&
+      !originalRequest._retry
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) =>
           failedQueue.push({ resolve, reject }),
