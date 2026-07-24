@@ -10,6 +10,8 @@ import { FcGoogle } from "react-icons/fc";
 import Button from '@mui/material/Button'
 import Divider from "@mui/material/Divider";
 import { useIsMobile } from "../../../../hooks/useMobile";
+import Link from "@mui/material/Link";
+import Chip from "@mui/material/Chip";
 
 export default function Login() {
   const [formData, setFormData] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
@@ -46,14 +48,15 @@ export default function Login() {
       <form onSubmit={handleSubmit} noValidate className={`flex flex-col gap-4 
         ${isMobile
           ? "w-full p-5!"
-          : "w-100"
-        } transition-all duration-50`}>
+          : "w-100 border border-gray-700 rounded-md p-5"
+        } transition-all duration-50`}
+      >
         {/* Google Login Button */}
-        <Button variant="outlined" startIcon={<FcGoogle />} size="large" fullWidth>
+        <Button variant="outlined" startIcon={<FcGoogle />} size="large" fullWidth disabled>
           Log in with Google
         </Button>
 
-        <Divider>or</Divider>
+        <Divider> <Chip label="OR" size="small" /></Divider>
 
         {/* Email */}
         <div >
@@ -128,6 +131,41 @@ export default function Login() {
         <Button variant="contained" color="primary" type="submit" size="large" >
           {"Login"}
         </Button>
+
+        <div className="flex flex-wrap justify-center gap-3">
+
+
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => {
+              console.info("I'm a button.");
+            }}
+          >
+            Create an account
+          </Link>
+          <Divider orientation="vertical" variant="middle" flexItem />
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => {
+              console.info("I'm a button.");
+            }}
+          >
+            Forgot Password?
+          </Link>
+          <Divider orientation="vertical" variant="middle" flexItem />
+          <Link
+            component="button"
+            variant="body2"
+            onClick={() => {
+              console.info("I'm a button.");
+            }}
+          >
+            Contact Support
+          </Link>
+
+        </div>
       </form>
     </div>
   );
