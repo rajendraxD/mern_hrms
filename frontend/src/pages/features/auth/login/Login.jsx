@@ -16,11 +16,12 @@ import Link from "@mui/material/Link";
 import Chip from "@mui/material/Chip";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../../store/slices/userSlice";
 
 export default function Login() {
   const navigate = useNavigate();
+  const { loading } = useSelector(state => state.user)
   const [formData, setFormData] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
   const [showPassword, setShowPassword] = useState(false);
   const isMobile = useIsMobile();
@@ -154,7 +155,7 @@ export default function Login() {
             }}
           />
         </div>
-        <Button variant="contained" color="primary" type="submit" size="large" >
+        <Button variant="contained" color="primary" type="submit" size="large" loading={loading} >
           {"Login"}
         </Button>
 
