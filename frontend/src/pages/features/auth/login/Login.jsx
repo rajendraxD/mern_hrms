@@ -6,6 +6,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import LockOutlined from "@mui/icons-material/LockOutlined";
+import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
 import { FcGoogle } from "react-icons/fc";
 import Button from '@mui/material/Button'
 import Divider from "@mui/material/Divider";
@@ -45,12 +46,16 @@ export default function Login() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
 
-      <form onSubmit={handleSubmit} noValidate className={`flex flex-col gap-4 
+      <form onSubmit={handleSubmit} noValidate className={`relative flex flex-col gap-4 overflow-hidden
         ${isMobile
           ? "w-full p-5!"
-          : "w-100 border border-gray-700 rounded-md p-5"
+          : "w-100 p-10!"
         } transition-all duration-50`}
       >
+
+        {/* Shield Background Image */}
+        <ShieldOutlined className="absolute text-gray-700/10 dark:text-gray-600/15 select-none pointer-events-none sm:hidden" sx={{ fontSize: 450, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
+
         {/* Google Login Button */}
         <Button variant="outlined" startIcon={<FcGoogle />} size="large" fullWidth disabled>
           Log in with Google
