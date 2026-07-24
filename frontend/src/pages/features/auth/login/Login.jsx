@@ -167,7 +167,7 @@ export default function Login() {
             component="button"
             variant="body2"
             onClick={() => {
-              console.info("I'm a button.");
+              window.location.href = "/forgotPassword";
             }}
           >
             Forgot Password?
