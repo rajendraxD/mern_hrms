@@ -14,21 +14,15 @@ export const login = createAsyncThunk("login", async (data, thunkAPI) => {
   }
 });
 
-// Logout: FORGIVING - Always clears state, even if API fails
 export const logout = createAsyncThunk("logout", async (_, thunkAPI) => {
-  const { dispatch } = thunkAPI;
   try {
     const res = await api.post(API_ENDPOINTS.LOGOUT);
     return res.data;
   } catch (error) {
-    // Token might be expired, THAT'S FINE. We still want to clear local state.
-    console.error("Logout API failed, clearing state anyway:", error.message);
     return thunkAPI.rejectWithValue(getErrorMessage(error));
-  } finally {
-    // Dispatch reset regardless of API success
-    dispatch(resetAuth());
   }
 });
+
 export const me = createAsyncThunk("me", async (_, thunkAPI) => {
   try {
     const res = await api.get(API_ENDPOINTS.ME);
@@ -45,25 +39,11 @@ const initialState = {
   isAuthenticated: false,
   error: null,
 };
+
 const userSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
-    setUser: (state, action) => {
-      state.user = action.payload;
-    },
-    setError: (state, action) => {
-      state.error = action.payload;
-    },
-    resetAuth(state) {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.loading = false;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
@@ -121,6 +101,5 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, setUser, setError, resetAuth } = userSlice.actions;
-
+// ponytail: no custom reducers — extraReducers cover all state transitions
 export default userSlice.reducer;

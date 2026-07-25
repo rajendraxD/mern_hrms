@@ -7,6 +7,18 @@ export const API_ENDPOINTS = {
   FORGOT_PASSWORD: "/user/forgotPassword",
   RESET_PASSWORD: "/user/resetPassword",
 };
+export const PASSWORD = { MIN: 6, MAX: 30 };
+
+export const VALIDATION = {
+  EMAIL_REQUIRED: "Email is required",
+  EMAIL_INVALID: "Email is invalid",
+  PASSWORD_REQUIRED: "Password is required",
+  PASSWORD_LENGTH: `Password must be between ${PASSWORD.MIN} and ${PASSWORD.MAX} characters long`,
+  EMAIL_PATTERN: /^\S+@\S+\.\S+$/,
+  LOADING: "Logging in...",
+  ERROR_FALLBACK: "Something went wrong",
+};
+
 export const ROUTES = {
   REGISTER: "/register",
   LOGIN: "/login",

@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import toast from "react-hot-toast";
 import { FcGoogle } from "react-icons/fc";
 import { login } from "../../../../store/slices/userSlice";
-import { ROUTES } from "../../../../utils/constants";
+import { ROUTES, VALIDATION, PASSWORD } from "../../../../utils/constants";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
@@ -27,9 +27,11 @@ export default function Login() {
 
   const validate = () => {
     const errs = {};
-    if (!formData.email) errs.email = "Email is required";
-    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) errs.email = "Invalid email";
-    if (!formData.password) errs.password = "Password is required";
+    if (!formData.email) errs.email = VALIDATION.EMAIL_REQUIRED;
+    else if (!VALIDATION.EMAIL_PATTERN.test(formData.email)) errs.email = VALIDATION.EMAIL_INVALID;
+    if (!formData.password) errs.password = VALIDATION.PASSWORD_REQUIRED;
+    else if (formData.password.length < PASSWORD.MIN || formData.password.length > PASSWORD.MAX)
+      errs.password = VALIDATION.PASSWORD_LENGTH;
     return errs;
   };
 
@@ -48,8 +50,8 @@ export default function Login() {
     setErrors(errs);
     if (Object.keys(errs).length) return;
     toast.promise(dispatch(login(formData)).unwrap(), {
-      loading: "Logging in...",
-      error: (res) => res || "Something went wrong",
+      loading: VALIDATION.LOADING,
+      error: (res) => res || VALIDATION.ERROR_FALLBACK,
     });
   };
 
