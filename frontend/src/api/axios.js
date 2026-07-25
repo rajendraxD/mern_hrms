@@ -10,6 +10,10 @@ const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
   timeout: 15000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
 });
 
 export const get = (url, params) => api.get(url, { params });
@@ -19,6 +23,13 @@ export const del = (url, config) => api.delete(url, config);
 
 let isRefreshing = false;
 let failedQueue = [];
+
+const skipEndpoints = new Set([
+  API_ENDPOINTS.LOGIN,
+  API_ENDPOINTS.REGISTER,
+  API_ENDPOINTS.REFRESH_TOKEN,
+  API_ENDPOINTS.LOGOUT,
+]);
 
 const processQueue = (error) => {
   failedQueue.forEach((promise) => {
@@ -31,27 +42,40 @@ const processQueue = (error) => {
   failedQueue = [];
 };
 
+// Request Interceptor
+api.interceptors.request.use(
+  (config) => {
+    if (import.meta.env.DEV) {
+      console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+    }
+    return config;
+  },
+  (error) => Promise.reject(error),
+);
+
 // Response Interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    const skipEndpoints = [
-      API_ENDPOINTS.LOGIN,
-      API_ENDPOINTS.REGISTER,
-      API_ENDPOINTS.REFRESH_TOKEN,
-      API_ENDPOINTS.LOGOUT,
-    ];
-    if (skipEndpoints.some((url) => originalRequest.url?.endsWith(url))) {
+    if (!error.response) {
+      if (import.meta.env.DEV) {
+        console.error("[API] Network error:", error.message);
+      }
+      return Promise.reject(error);
+    }
+
+    if (skipEndpoints.has(originalRequest.url)) {
       return Promise.reject(error);
     }
 
     if (
-      (error.response?.status === 401 || error.response?.status === 403) &&
+      (error.response.status === 401 || error.response.status === 403) &&
       !originalRequest._retry
     ) {
       if (isRefreshing) {
+        originalRequest._retry = true;
         return new Promise((resolve, reject) =>
           failedQueue.push({ resolve, reject }),
         )
@@ -65,13 +89,12 @@ api.interceptors.response.use(
       try {
         await api.get(API_ENDPOINTS.REFRESH_TOKEN);
         processQueue(null);
-        return api(originalRequest); // Retry
+        return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError);
 
-        // Optional: Redirect to login if not already there
         if (window.location.pathname !== ROUTES.LOGIN) {
-          window.location.href = ROUTES.LOGIN;
+          window.dispatchEvent(new CustomEvent("auth:logout"));
         }
 
         return Promise.reject(refreshError);
