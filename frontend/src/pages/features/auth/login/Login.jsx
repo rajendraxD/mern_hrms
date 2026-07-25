@@ -1,204 +1,127 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { FcGoogle } from "react-icons/fc";
+import { login } from "../../../../store/slices/userSlice";
+import { ROUTES } from "../../../../utils/constants";
 import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
+import Divider from "@mui/material/Divider";
+import Chip from "@mui/material/Chip";
+import Link from "@mui/material/Link";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import EmailOutlined from "@mui/icons-material/EmailOutlined";
 import LockOutlined from "@mui/icons-material/LockOutlined";
-import ShieldOutlined from "@mui/icons-material/ShieldOutlined";
-import { motion } from "framer-motion";
-import { FcGoogle } from "react-icons/fc";
-import Button from '@mui/material/Button'
-import Divider from "@mui/material/Divider";
-import { useIsMobile } from "../../../../hooks/useMobile";
-import Link from "@mui/material/Link";
-import Chip from "@mui/material/Chip";
-import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../../../../utils/constants";
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../../../store/slices/userSlice";
-import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { loading } = useSelector(state => state.user)
-  const [formData, setFormData] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
-  const [showPassword, setShowPassword] = useState(false);
-  const isMobile = useIsMobile();
+  const { loading } = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  // const { login } = useSelector(state => state.user)
+  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState({});
 
-  // ── Handlers ──────────────────────────────────────────
-  const handleChange = (e) => {
-    let { name, value } = e.target;
-    if (name === "email") {
-      value = value.toLowerCase();
-    }
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
+  const validate = () => {
+    const errs = {};
+    if (!formData.email) errs.email = "Email is required";
+    else if (!/^\S+@\S+\.\S+$/.test(formData.email)) errs.email = "Invalid email";
+    if (!formData.password) errs.password = "Password is required";
+    return errs;
   };
 
-  const handleSubmit = async (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: name === "email" ? value.toLowerCase() : value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await toast.promise(dispatch(login(formData)).unwrap(), {
-        loading: "Logging in...",
-        // success: "Logged in successfully",
-        error: (res) => { return res || "Something went wrong" }
-      })
-    } catch (err) {
-      console.log(err);
-    }
+    const errs = validate();
+    setErrors(errs);
+    if (Object.keys(errs).length) return;
+    toast.promise(dispatch(login(formData)).unwrap(), {
+      loading: "Logging in...",
+      error: (res) => res || "Something went wrong",
+    });
   };
 
   return (
-    <motion.div className="flex flex-col items-center justify-center min-h-screen"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.5, ease: "easeInOut" }}
-    >
-
-      <form onSubmit={handleSubmit} noValidate className={`relative flex flex-col gap-4 overflow-hidden
-        ${isMobile
-          ? "w-full p-5!"
-          : "w-96 p-10!"
-        } transition-all duration-75`}
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <form
+        onSubmit={handleSubmit}
+        noValidate
+        className="flex flex-col gap-4 w-full sm:w-96 p-5 sm:p-10"
       >
-
-        {/* Shield Watermarks */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
-          animate={{ y: [0, -6, 0], scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
-          transition={{ duration: 4, ease: "easeInOut", repeat: Infinity }}
-        >
-          <ShieldOutlined className="text-gray-700/10 dark:text-gray-600/15" sx={{ fontSize: 400 }} />
-        </motion.div>
-
-
-
-        {/* Google Login Button */}
         <Button variant="outlined" startIcon={<FcGoogle />} size="large" color="inherit" fullWidth disabled>
           Log in with Google
         </Button>
 
-        <Divider> <Chip label="OR" size="small" /></Divider>
+        <Divider><Chip label="OR" size="small" /></Divider>
 
-        {/* Email */}
-        <div >
-          <TextField
-            fullWidth
-            name="email"
-            type="email"
-            autoComplete="email"
-            autoFocus
-            label="Email"
-            value={formData.email}
-            onChange={handleChange}
-            size="medium"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <EmailOutlined
-                      fontSize="small"
-                      color="inherit"
-                    />
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </div>
+        <TextField
+          fullWidth name="email" type="email" autoComplete="email" autoFocus
+          label="Email" value={formData.email} onChange={handleChange}
+          error={!!errors.email} helperText={errors.email}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <EmailOutlined fontSize="small" color="inherit" />
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
 
-        {/* Password */}
-        <div >
-          <TextField
-            fullWidth
-            name="password"
-            type={showPassword ? "text" : "password"}
-            autoComplete="current-password"
-            value={formData.password}
-            label="Password"
-            onChange={handleChange}
-            size="medium"
-            slotProps={{
-              input: {
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <LockOutlined
-                      fontSize="small"
-                      color="inherit"
-                    />
-                  </InputAdornment>
-                ),
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      onClick={() => setShowPassword((prev) => !prev)}
-                      edge="end"
-                      size="small"
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                    >
-                      {showPassword ? (
-                        <VisibilityOff fontSize="small" />
-                      ) : (
-                        <Visibility fontSize="small" />
-                      )}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </div>
-        <Button variant="contained" color="primary" type="submit" size="large" disabled={loading} >
-          {"Login"}
+        <TextField
+          fullWidth name="password"
+          type={showPassword ? "text" : "password"}
+          autoComplete="current-password" label="Password"
+          value={formData.password} onChange={handleChange}
+          error={!!errors.password} helperText={errors.password}
+          slotProps={{
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">
+                  <LockOutlined fontSize="small" color="inherit" />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    edge="end" size="small"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+        />
+
+        <Button variant="contained" color="primary" type="submit" size="large" disabled={loading}>
+          Login
         </Button>
 
         <div className="flex flex-wrap justify-center gap-3">
-
-
-          <Link
-            component="button"
-            variant="body2"
-            color="inherit"
-            onClick={() => {
-              console.info("I'm a button.");
-            }}
-          >
+          <Link component="button" variant="body2" color="inherit" onClick={() => navigate(ROUTES.REGISTER)}>
             Don't have an account?
           </Link>
-          <Link
-            component="button"
-            variant="body2"
-            color="inherit"
-            onClick={
-              (e) => {
-                e.preventDefault();
-                navigate(ROUTES.FORGOT_PASSWORD);
-              }}
-          >
+          <Link component="button" variant="body2" color="inherit" onClick={() => navigate(ROUTES.FORGOT_PASSWORD)}>
             Forgot Password?
-          </Link>
-          <Link
-            component="button"
-            variant="body2"
-            color="inherit"
-            onClick={() => {
-              console.info("I'm a button.");
-            }}
-          >
-            Contact Support
           </Link>
         </div>
       </form>
-    </motion.div >
+    </div>
   );
 }
