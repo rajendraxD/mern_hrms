@@ -18,6 +18,7 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../../../store/slices/userSlice";
+import toast from 'react-hot-toast';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -43,9 +44,12 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(JSON.stringify(formData));
     try {
-      await dispatch(login(formData)).unwrap()
+      await toast.promise(dispatch(login(formData)).unwrap(), {
+        loading: "Logging in...",
+        // success: "Logged in successfully",
+        error: (res) => { return res || "Something went wrong" }
+      })
     } catch (err) {
       console.log(err);
     }

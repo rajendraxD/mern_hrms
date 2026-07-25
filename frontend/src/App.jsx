@@ -7,6 +7,7 @@ import { ROUTES } from "./utils/constants.js";
 import { me } from "./store/slices/userSlice.js";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { Toaster } from 'react-hot-toast';
 
 const AutoLogin = ({ children }) => {
   const dispatch = useDispatch();
@@ -30,6 +31,10 @@ export default function App() {
   return (
     <BrowserRouter>
       <AutoLogin>
+        <Toaster
+          position="top-right"
+          reverseOrder={false}
+        />
         <Routes>
           <Route element={<PublicRoute />}>
             <Route path="/" element={<Navigate to={ROUTES.LOGIN} />} />
