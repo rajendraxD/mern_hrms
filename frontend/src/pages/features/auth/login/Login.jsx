@@ -43,7 +43,7 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(JSON.stringify(formData));
     try {
       await dispatch(login(formData)).unwrap()
     } catch (err) {
