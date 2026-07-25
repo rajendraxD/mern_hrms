@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/features/auth/login/Login.jsx";
 import { ProtectedRoute, PublicRoute } from "./utils/RouteProtected.jsx";
 import Dashboard from "./pages/features/dashboard/Dashboard.jsx";
-import ForgotPassword from "./pages/features/auth/forgot-password/forgotPassword.jsx";
+import ForgotPassword from "./pages/features/auth/forgotPassword/ForgotPassword.jsx";
 import { ROUTES } from "./utils/constants.js";
 import { me } from "./store/slices/userSlice.js";
 import { useEffect } from "react";
