@@ -16,8 +16,6 @@ import { sendSuccess } from "./utils/ApiResponse.js";
 import { connectDB } from "./config/db.js";
 import routes from "./routes/index.js";
 
-// const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const app = express();
 
 // Connect to database
@@ -39,9 +37,6 @@ app.use(cookieParser());
 app.use(compression());
 app.use(morgan(env.isProd ? "combined" : "dev", { stream: morganStream }));
 app.use(requestContext);
-
-// Static avatars (local disk fallback)
-//   app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
 
 // Routes
 

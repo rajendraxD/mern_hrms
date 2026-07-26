@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import BrightnessAutoIcon from '@mui/icons-material/BrightnessAuto';
-import { setMode } from "../../store/slices/themeModeSlice";
+import { setMode } from "../../store/slices/themeSlice";
 
 /**
  * ThemeToggle — switches between light, dark, and system mode.

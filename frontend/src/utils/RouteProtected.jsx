@@ -3,20 +3,20 @@ import { Navigate, Outlet } from "react-router-dom";
 import { ROUTES } from "./constants";
 import Loading from "../components/common/Loading";
 
-export const PublicRoute = () => {
-  const { isAuthenticated, user, loading } = useSelector(state => state.user)
-  if (loading) return <Loading />;
-  if (isAuthenticated && user) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
-  }
-  return <Outlet />;
+export const ProtectedRoute = () => {
+  const { accessToken, initialLoading } = useSelector((s) => s.user);
+
+  // Wait for the refresh-token attempt to finish before redirecting
+  if (initialLoading) return <Loading fullScreen />;
+
+  return accessToken ? <Outlet /> : <Navigate to={ROUTES.LOGIN} replace />;
 };
 
-export const ProtectedRoute = () => {
-  const { isAuthenticated, user, initialLoading } = useSelector(state => state.user)
-  if (initialLoading) return <Loading />;
-  if (isAuthenticated && user) {
-    return <Outlet />;
-  }
-  return <Navigate to={ROUTES.LOGIN} replace />;
+export const PublicRoute = () => {
+  const { accessToken, initialLoading } = useSelector((s) => s.user);
+
+  // Wait for the refresh-token attempt to finish before redirecting
+  if (initialLoading) return <Loading fullScreen />;
+
+  return accessToken ? <Navigate to={ROUTES.DASHBOARD} replace /> : <Outlet />;
 };

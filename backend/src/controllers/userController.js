@@ -11,6 +11,12 @@ import bcrypt from "bcryptjs";
 import { validationResult } from "express-validator";
 
 export const register = asyncHandler(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((error) => error.msg);
+    throw ApiError.validation(errorMessages);
+  }
+
   const { name, email, password } = req.body;
 
   if (!name || !email || !password)
@@ -35,6 +41,7 @@ export const register = asyncHandler(async (req, res) => {
     success: true,
     message: "User registered successfully.",
     user,
+    accessToken: tokens.accessToken,
   });
 });
 
@@ -42,7 +49,6 @@ export const login = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     const errorMessages = errors.array().map((error) => error.msg);
-    // return next(new ErrorHandler(errorMessages, 400));
     throw ApiError.validation(errorMessages);
   }
 
@@ -66,15 +72,21 @@ export const login = asyncHandler(async (req, res) => {
     success: true,
     message: "User logged in successfully.",
     user,
+    accessToken: tokens.accessToken,
   });
 });
 
 export const logout = asyncHandler(async (req, res) => {
+  const token = req.cookies?.refreshToken;
+  if (token) {
+    const user = await UserModel.findOne({ refreshToken: token });
+    if (user) {
+      user.refreshToken = null;
+      await user.save();
+    }
+  }
+
   clearTokenOnCookie(res);
-
-  req.user.refreshToken = null;
-  await req.user.save();
-
   return res.status(200).json({
     success: true,
     message: "User logged out successfully.",
@@ -87,24 +99,28 @@ export const refreshToken = asyncHandler(async (req, res) => {
     throw ApiError.unauthorized("Authentication required. Please log in.");
 
   const decoded = verifyRefreshToken(refreshToken);
+  console.log(decoded);
   const user = await UserModel.findOne({
     _id: decoded.id,
     refreshToken: refreshToken,
-  }).select("_id role");
+  });
+  // .select("_id role");
 
   if (!user) {
     throw ApiError.unauthorized("Invalid or expired refresh token.");
   }
 
   const tokens = generateTokens(user._id, user.role);
-  setTokenOnCookie(res, tokens);
 
   user.refreshToken = tokens.refreshToken;
   await user.save();
 
+  setTokenOnCookie(res, tokens);
   return res.status(200).json({
     success: true,
     message: "Token refreshed successfully.",
+    user,
+    accessToken: tokens.accessToken,
   });
 });
 
@@ -113,5 +129,62 @@ export const profile = asyncHandler(async (req, res) => {
     success: true,
     message: "User profile fetched successfully.",
     user: req.user,
+  });
+});
+
+export const updateProfile = asyncHandler(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((error) => error.msg);
+    throw ApiError.validation(errorMessages);
+  }
+
+  const { name, department, jobTitle, phone, bio, avatar } = req.body;
+  const user = req.user;
+
+  if (name !== undefined) user.name = name;
+  if (department !== undefined) user.department = department;
+  if (jobTitle !== undefined) user.jobTitle = jobTitle;
+  if (phone !== undefined) user.phone = phone;
+  if (bio !== undefined) user.bio = bio;
+  if (avatar !== undefined) user.avatar = avatar;
+
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Profile updated successfully.",
+    user,
+  });
+});
+
+export const changePassword = asyncHandler(async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const errorMessages = errors.array().map((error) => error.msg);
+    throw ApiError.validation(errorMessages);
+  }
+
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    throw ApiError.badRequest("Please provide both current and new password.");
+  }
+
+  const user = await UserModel.findById(req.user._id);
+  if (!user) {
+    throw ApiError.notFound("User not found.");
+  }
+
+  const isPasswordValid = await user.comparePassword(currentPassword);
+  if (!isPasswordValid) {
+    throw ApiError.unauthorized("Current password is incorrect.");
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return res.status(200).json({
+    success: true,
+    message: "Password changed successfully.",
   });
 });

@@ -45,29 +45,53 @@ export const generateTokens = (userId, role) => {
   return { accessToken, refreshToken };
 };
 
+const parseDurationToMs = (duration) => {
+  if (typeof duration === "number") return duration;
+  if (!duration || typeof duration !== "string") return 24 * 60 * 60 * 1000;
+
+  const unit = duration.slice(-1);
+  const value = parseInt(duration.slice(0, -1), 10);
+  if (isNaN(value)) return 24 * 60 * 60 * 1000;
+
+  switch (unit) {
+    case "s":
+      return value * 1000;
+    case "m":
+      return value * 60 * 1000;
+    case "h":
+      return value * 60 * 60 * 1000;
+    case "d":
+      return value * 24 * 60 * 60 * 1000;
+    default:
+      return value;
+  }
+};
+
 const cookieOptions = {
-  secure: true,
-  sameSite: secure ? "none" : "lax",
+  secure: env.isProd,
+  sameSite: env.isProd ? "none" : "lax",
   path: "/",
+  httpOnly: true,
 };
 
 export const setTokenOnCookie = (res, token) => {
   const { accessToken, refreshToken } = token;
+  // const accessMs = parseDurationToMs(env.jwt.accessExpiry);
+  const refreshMs = parseDurationToMs(env.jwt.refreshExpiry);
+
   res
-    .cookie("accessToken", accessToken, {
-      ...cookieOptions,
-      maxAge: Number(env.jwt.accessExpiry),
-      httpOnly: false,
-    })
+    // .cookie("accessToken", accessToken, {
+    //   ...cookieOptions,
+    //   maxAge: accessMs,
+    // })
     .cookie("refreshToken", refreshToken, {
       ...cookieOptions,
-      maxAge: Number(env.jwt.refreshExpiry),
-      httpOnly: true,
+      maxAge: refreshMs,
     });
 };
 
 export const clearTokenOnCookie = (res) => {
   res
-    .clearCookie("accessToken", cookieOptions)
+    // .clearCookie("accessToken", cookieOptions)
     .clearCookie("refreshToken", cookieOptions);
 };

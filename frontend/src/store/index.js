@@ -1,12 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
-import userReducer from "../store/slices/userSlice";
-import themeModeReducer from "../store/slices/themeModeSlice";
+import userReducer from "./slices/userSlice";
+import themeReducer from "./slices/themeSlice";
+import { injectStore } from "../api/axios";
 
-export const store = configureStore({
-  reducer: {
-    user: userReducer,
-    theme: themeModeReducer,
-  },
+const store = configureStore({
+  reducer: { user: userReducer, theme: themeReducer },
 });
+
+injectStore(store);
 
 export default store;

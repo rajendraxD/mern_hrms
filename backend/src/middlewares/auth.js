@@ -4,25 +4,36 @@ import UserModel from "../models/UserModel.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { logger } from "../config/logger.js";
 
+/**
+ * Extract the access token from either:
+ * 1. The `Authorization: Bearer <token>` header (set by the axios interceptor)
+ * 2. The `accessToken` cookie (legacy / future support)
+ */
+const extractAccessToken = (req) => {
+  // Check Authorization header first (primary method)
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith("Bearer ")) {
+    return authHeader.slice(7);
+  }
+  // Fall back to cookie
+  return req.cookies?.accessToken;
+};
+
 export const isAuthenticate = asyncHandler(async (req, _res, next) => {
-  const { accessToken, refreshToken } = req.cookies;
-  if (!accessToken) {
+  const token = extractAccessToken(req);
+
+  if (!token) {
     logger.info("auth-middleware:Access token missing.");
     return next(
       ApiError.unauthorized("Authentication required. Please log in."),
     );
   }
 
-  const decoded = verifyAccessToken(accessToken);
+  const decoded = verifyAccessToken(token);
   const user = await UserModel.findById(decoded.id);
   if (!user) {
     logger.info("auth-middleware:User not found in database.");
     return next(ApiError.unauthorized("User not found."));
-  }
-
-  if (refreshToken !== user.refreshToken) {
-    logger.info("auth-middleware:Refresh token mismatch.");
-    return next(ApiError.unauthorized("Invalid or expired refresh token."));
   }
 
   req.user = user;

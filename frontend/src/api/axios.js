@@ -1,104 +1,73 @@
-// src/api/axios.js
 import axios from "axios";
-import { API_ENDPOINTS, ROUTES } from "../utils/constants";
 
-const API_BASE_URL = `${
-  import.meta.env.VITE_API_URL || "http://localhost:5000"
-}/api`;
+/**
+ * Lazily-injected store reference to break the circular dependency:
+ *   store/index.js → userSlice.js → axios.js → store/index.js ✗
+ *
+ * Call injectStore(store) once the store is created.
+ */
+let store = null;
+export const injectStore = (_store) => {
+  store = _store;
+};
 
 const api = axios.create({
-  baseURL: API_BASE_URL,
-  withCredentials: true,
-  timeout: 15000,
-  headers: {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  },
+  baseURL: "http://localhost:5000/api",
+  withCredentials: true, // send httpOnly cookie
+});
+
+// Inject access token on every request
+api.interceptors.request.use((config) => {
+  const token = store?.getState().user.accessToken;
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
 });
 
 let isRefreshing = false;
 let failedQueue = [];
 
-const skipEndpoints = new Set([
-  API_ENDPOINTS.LOGIN,
-  API_ENDPOINTS.REGISTER,
-  API_ENDPOINTS.REFRESH_TOKEN,
-  API_ENDPOINTS.LOGOUT,
-]);
-
-const processQueue = (error) => {
-  failedQueue.forEach((promise) => {
-    if (error) {
-      promise.reject(error);
-    } else {
-      promise.resolve();
-    }
-  });
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((p) => (error ? p.reject(error) : p.resolve(token)));
   failedQueue = [];
 };
 
-// Request Interceptor
-api.interceptors.request.use(
-  (config) => {
-    if (import.meta.env.DEV) {
-      console.log(`[API] ${config.method?.toUpperCase()} ${config.url}`);
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
-
-// Response Interceptor
+// On 401: refresh once, then retry queued requests
 api.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error) => {
-    const originalRequest = error.config;
-
-    if (!error.response) {
-      if (import.meta.env.DEV) {
-        console.error("[API] Network error:", error.message);
-      }
+    const original = error.config;
+    if (error.response?.status !== 401 || original._retry) {
       return Promise.reject(error);
     }
-
-    if (skipEndpoints.has(originalRequest.url)) {
-      return Promise.reject(error);
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        failedQueue.push({ resolve, reject });
+      }).then((token) => {
+        original.headers.Authorization = `Bearer ${token}`;
+        return api(original);
+      });
     }
-
-    if (
-      (error.response.status === 401 || error.response.status === 403) &&
-      !originalRequest._retry
-    ) {
-      if (isRefreshing) {
-        originalRequest._retry = true;
-        return new Promise((resolve, reject) =>
-          failedQueue.push({ resolve, reject }),
-        )
-          .then(() => api(originalRequest))
-          .catch((err) => Promise.reject(err));
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-        await api.get(API_ENDPOINTS.REFRESH_TOKEN);
-        processQueue(null);
-        return api(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError);
-
-        if (window.location.pathname !== ROUTES.LOGIN) {
-          window.dispatchEvent(new CustomEvent("auth:logout"));
-        }
-
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
+    original._retry = true;
+    isRefreshing = true;
+    try {
+      const { data } = await axios.get(
+        "http://localhost:5000/api/user/refreshToken",
+        { withCredentials: true },
+      );
+      store.dispatch({
+        type: 'user/setCredentials',
+        payload: { accessToken: data.accessToken, user: data.user },
+      });
+      processQueue(null, data.accessToken);
+      original.headers.Authorization = `Bearer ${data.accessToken}`;
+      return api(original);
+    } catch (err) {
+      processQueue(err, null);
+      store.dispatch({ type: 'logout' });
+      return Promise.reject(err);
+    } finally {
+      isRefreshing = false;
     }
-
-    return Promise.reject(error);
   },
 );
 

@@ -1,7 +1,7 @@
 import { useMemo, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ThemeProvider, createTheme, CssBaseline } from "@mui/material";
-import { syncSystemTheme } from "../store/slices/themeModeSlice";
+import { syncSystemTheme } from "../store/slices/themeSlice";
 
 const MuiThemeProvider = ({ children }) => {
   const dispatch = useDispatch();

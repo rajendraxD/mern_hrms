@@ -12,6 +12,11 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    department: { type: String, default: "Engineering" },
+    jobTitle: { type: String, default: "Software Engineer" },
+    phone: { type: String, default: "" },
+    bio: { type: String, default: "" },
+    avatar: { type: String, default: "" },
     refreshToken: { type: String },
   },
   {

@@ -1,0 +1,16 @@
+{
+  "name": "user_management",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently -n backend,frontend -c yellow,cyan \"cd backend && npm run dev\" \"cd frontend && npm run dev\"",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "clean": "rimraf node_modules backend/node_modules frontend/node_modules",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "reinstall": "npm run clean && npm run install:all"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.4",
+    "rimraf": "^6.1.3"
+  }
+}
