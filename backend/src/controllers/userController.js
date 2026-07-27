@@ -95,8 +95,7 @@ export const logout = asyncHandler(async (req, res) => {
 
 export const refreshToken = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken)
-    throw ApiError.unauthorized("Authentication required. Please log in.");
+  if (!refreshToken) return res.status(204).end();
 
   const decoded = verifyRefreshToken(refreshToken);
   console.log(decoded);
