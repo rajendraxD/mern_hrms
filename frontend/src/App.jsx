@@ -6,7 +6,8 @@ import DashboardPage from "./pages/features/dashboard/DashboardPage"
 import { refreshTokenThunk } from "./app/slices/userSlice"
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { Toaster } from "react-hot-toast"
+// import { Toaster } from "react-hot-toast"
+// import { Toaster } from "@/components/ui/toast"
 
 export default function App() {
   const dispatch = useDispatch();
@@ -26,7 +27,8 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Toaster position="top-right" richColors theme="dark" />
+      {/* <Toaster position="top-right" richColors theme="dark" /> */}
+      {/* <Toaster/> */}
       <Routes>
         <Route element={<PublicRoute />} >
           <Route path="/" element={<Navigate to="/login" />} />

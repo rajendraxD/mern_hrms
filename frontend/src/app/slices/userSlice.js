@@ -74,6 +74,9 @@ export const userSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       if (action.payload.user) state.user = action.payload.user;
     },
+    setError(state, action) {
+      state.error = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -142,5 +145,5 @@ export const userSlice = createSlice({
   },
 });
 
-export const { logout, setCredentials } = userSlice.actions;
+export const { logout, setCredentials, setError } = userSlice.actions;
 export default userSlice.reducer;
