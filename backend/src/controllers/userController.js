@@ -98,7 +98,6 @@ export const refreshToken = asyncHandler(async (req, res) => {
   if (!refreshToken) return res.status(204).end();
 
   const decoded = verifyRefreshToken(refreshToken);
-  console.log(decoded);
   const user = await UserModel.findOne({
     _id: decoded.id,
     refreshToken: refreshToken,

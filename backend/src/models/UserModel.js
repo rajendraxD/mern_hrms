@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema(
   {
     name: { type: String },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String, required: true },
     role: {
       type: String,
@@ -12,10 +12,6 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user",
     },
-    department: { type: String, default: "Engineering" },
-    jobTitle: { type: String, default: "Software Engineer" },
-    phone: { type: String, default: "" },
-    bio: { type: String, default: "" },
     avatar: { type: String, default: "" },
     refreshToken: { type: String },
   },

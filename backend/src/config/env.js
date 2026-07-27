@@ -18,7 +18,7 @@ export const envConfig = {
   isVercel: getEnv("VERCEL", "false") === "true",
   jwt: {
     accessSecret: getEnv("JWT_ACCESS_SECRET", "access_secret"),
-    accessExpiry: getEnv("JWT_ACCESS_EXPIRY", "1d"),
+    accessExpiry: getEnv("JWT_ACCESS_EXPIRY", "15m"),
     refreshSecret: getEnv("JWT_REFRESH_SECRET", "refresh_secret"),
     refreshExpiry: getEnv("JWT_REFRESH_EXPIRY", "7d"),
   },

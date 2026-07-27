@@ -66,12 +66,27 @@ const changePasswordValidate = [
     .withMessage("New password must be between 6 and 30 characters long"),
 ];
 
-router.post("/register", registerValidate, authLimiter, userController.register);
+router.post(
+  "/register",
+  registerValidate,
+  authLimiter,
+  userController.register,
+);
 router.post("/login", loginValidate, authLimiter, userController.login);
 router.post("/logout", isAuthenticate, userController.logout);
 router.get("/refreshToken", userController.refreshToken);
 router.get("/me", isAuthenticate, userController.profile);
-router.put("/profile", isAuthenticate, profileValidate, userController.updateProfile);
-router.put("/change-password", isAuthenticate, changePasswordValidate, userController.changePassword);
+router.put(
+  "/profile",
+  isAuthenticate,
+  profileValidate,
+  userController.updateProfile,
+);
+router.put(
+  "/change-password",
+  isAuthenticate,
+  changePasswordValidate,
+  userController.changePassword,
+);
 
 export default router;

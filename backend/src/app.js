@@ -44,7 +44,7 @@ app.get("/", (req, res) => {
   return sendSuccess(res, { message: "Server is running..." });
 });
 
-app.use("/api", routes);
+app.use("/api",apiLimiter, routes);
 
 // Error handlers
 app.use(notFound);

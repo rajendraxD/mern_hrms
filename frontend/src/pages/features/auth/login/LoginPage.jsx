@@ -19,7 +19,7 @@ export default function LoginPage() {
   const { status } = useSelector((s) => s.user);
   const loading = status === "loading";
 
-  const [form, setForm] = useState({ email: "rajendraxd1@gmail.com", password: "111111" });
+  const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
