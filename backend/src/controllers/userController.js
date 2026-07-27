@@ -25,10 +25,12 @@ export const register = asyncHandler(async (req, res) => {
   const isExistingUser = await UserModel.findOne({ email });
   if (isExistingUser) throw ApiError.conflict("User already exists.");
 
+  const isFirst = (await UserModel.countDocuments()) === 0;
   let user = await UserModel.create({
     name,
     email,
     password,
+    role: isFirst ? "admin" : "user",
   });
 
   const tokens = generateTokens(user._id, user.role);

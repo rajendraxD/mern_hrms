@@ -17,7 +17,7 @@ export const registerThunk = createAsyncThunk(
   "user/register",
   async (body, { rejectWithValue }) => {
     try {
-      const res= await api.post("/user/register", body);
+      const res = await api.post("/user/register", body);
       return res.data;
     } catch (err) {
       return rejectWithValue(
@@ -36,6 +36,17 @@ export const refreshTokenThunk = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const { data } = await api.get("/user/refreshToken");
+      return data;
+    } catch {
+      return rejectWithValue(null); // silent
+    }
+  },
+);
+export const profileThunk = createAsyncThunk(
+  "user/me",
+  async (_, { rejectWithValue }) => {
+    try {
+      const { data } = await api.get("/user/me");
       return data;
     } catch {
       return rejectWithValue(null); // silent
@@ -113,6 +124,21 @@ export const userSlice = createSlice({
       state.user = null;
       state.accessToken = null;
     });
+
+    /* ── Me ── */
+    builder
+     builder
+      .addCase(profileThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(profileThunk.fulfilled, (state, action) => {
+        state.initialized = true;
+        state.user = action.payload;
+      })
+      .addCase(profileThunk.rejected, (state) => {
+        state.initialized = true;
+      });
   },
 });
 
