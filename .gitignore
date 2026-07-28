@@ -7,4 +7,5 @@ skills-lock.json
 .agents
 .claude
 .opencode
-playwright.config.js
+.playwright*
+.mcp*

@@ -27,7 +27,19 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
 
 app.use(
   cors({
-    origin: [env.frontendUrl, "http://localhost:5173"],
+    origin: function (origin, cb) {
+      const allowed = [
+        env.frontendUrl,
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:4173",
+      ];
+      if (!origin || allowed.includes(origin)) return cb(null, true);
+      // dev — allow any localhost port
+      if (/^http:\/\/localhost:\d+$/.test(origin)) return cb(null, true);
+      cb(null, false);
+    },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
