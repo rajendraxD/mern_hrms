@@ -4,6 +4,7 @@ import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute"
 import { refreshTokenThunk } from "./app/slices/userSlice"
 import { useDispatch } from "react-redux"
 import LoadingSpinner from "./components/LoadingSpinner"
+import MainLayout from "./components/layout/main"
 
 const LoginPage = lazy(() => import("./pages/features/auth/login/LoginPage"))
 const RegisterPage = lazy(() => import("./pages/features/auth/register/registerPage"))
@@ -26,8 +27,10 @@ export default function App() {
           </Route>
 
           <Route element={<ProtectedRoute />} >
-            <Route path="/" element={<Navigate to="/dashboard" />} />
-            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route element={<MainLayout />} >
+              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/dashboard" element={<DashboardPage />} />
+            </Route>
           </Route>
         </Routes>
       </Suspense>

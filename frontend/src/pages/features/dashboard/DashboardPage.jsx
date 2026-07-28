@@ -23,7 +23,7 @@ export default function DashboardPage() {
 
   if (status == "loading" || !user) return <CardSkeleton />
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-full">
       <Card className="relative mx-auto w-full max-w-sm pt-0">
         <div className="absolute inset-0 z-30 aspect-video bg-black/35" />
         <img
