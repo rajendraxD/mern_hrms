@@ -12,6 +12,7 @@ const LoginPage = lazy(() => import("./pages/features/auth/login/LoginPage"))
 const RegisterPage = lazy(() => import("./pages/features/auth/register/registerPage"))
 const DashboardPage = lazy(() => import("./pages/features/dashboard/DashboardPage"))
 const ProfilePage = lazy(() => import("./pages/features/profile/ProfilePage"))
+const NotFoundPage = lazy(() => import("./pages/features/notFound/NotFoundPage"))
 
 export default function App() {
   const dispatch = useDispatch();
@@ -48,6 +49,7 @@ export default function App() {
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
+              <Route path="*" element={<NotFoundPage />} />
             </Route>
           </Route>
         </Routes>

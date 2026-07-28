@@ -52,9 +52,9 @@ export default function AppHeader() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => dispatch(logoutThunk())}>
+            <DropdownMenuItem variant="destructive" onClick={() => dispatch(logoutThunk())}>
               <LogOut className="size-4" />
-              Sign Out
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
