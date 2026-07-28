@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
 import { LogOut, User, Settings } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { logoutThunk } from "@/app/slices/userSlice"
@@ -25,8 +27,9 @@ export default function AppHeader() {
       <div className="flex-1" />
       {user && (
         <DropdownMenu>
-          <DropdownMenuTrigger className="flex items-center gap-2 rounded-full outline-none">
+          <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8 rounded-full" />}>
             <Avatar className="size-8">
+              <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
@@ -38,15 +41,20 @@ export default function AppHeader() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/profile")}>
-              <User className="mr-2 size-4" /> Profile
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate("/settings")}>
-              <Settings className="mr-2 size-4" /> Settings
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <User className="size-4" />
+                Account
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/settings")}>
+                <Settings className="size-4" />
+                Settings
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => dispatch(logoutThunk())}>
-              <LogOut className="mr-2 size-4" /> Logout
+              <LogOut className="size-4" />
+              Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -6,9 +6,12 @@ import { useDispatch, useSelector } from "react-redux"
 import LoadingSpinner from "./components/LoadingSpinner"
 import MainLayout from "./components/layout/main"
 
+import { Toaster } from "@/components/ui/toast"
+
 const LoginPage = lazy(() => import("./pages/features/auth/login/LoginPage"))
 const RegisterPage = lazy(() => import("./pages/features/auth/register/registerPage"))
 const DashboardPage = lazy(() => import("./pages/features/dashboard/DashboardPage"))
+const ProfilePage = lazy(() => import("./pages/features/profile/ProfilePage"))
 
 export default function App() {
   const dispatch = useDispatch();
@@ -44,10 +47,12 @@ export default function App() {
             <Route element={<MainLayout />} >
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
             </Route>
           </Route>
         </Routes>
       </Suspense>
+      <Toaster />
     </BrowserRouter>
   )
 }

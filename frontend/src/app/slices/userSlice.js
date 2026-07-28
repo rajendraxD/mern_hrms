@@ -54,6 +54,34 @@ export const profileThunk = createAsyncThunk(
   },
 );
 
+export const updateProfileThunk = createAsyncThunk(
+  "user/updateProfile",
+  async (body, { rejectWithValue }) => {
+    try {
+      const { data } = await api.put("/user/profile", body);
+      return data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Update failed",
+      );
+    }
+  },
+);
+
+export const changePasswordThunk = createAsyncThunk(
+  "user/changePassword",
+  async (body, { rejectWithValue }) => {
+    try {
+      const { data } = await api.put("/user/change-password", body);
+      return data;
+    } catch (err) {
+      return rejectWithValue(
+        err.response?.data?.message || "Password change failed",
+      );
+    }
+  },
+);
+
 const initialState = {
   user: null,
   accessToken: null,
@@ -140,6 +168,35 @@ export const userSlice = createSlice({
       })
       .addCase(profileThunk.rejected, (state) => {
         state.initialized = true;
+      });
+
+    /* ── Update Profile ── */
+    builder
+      .addCase(updateProfileThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(updateProfileThunk.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.user = action.payload.user;
+      })
+      .addCase(updateProfileThunk.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
+      });
+
+    /* ── Change Password ── */
+    builder
+      .addCase(changePasswordThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(changePasswordThunk.fulfilled, (state) => {
+        state.status = "idle";
+      })
+      .addCase(changePasswordThunk.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
   },
 });
