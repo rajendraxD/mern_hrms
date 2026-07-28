@@ -53,7 +53,8 @@ export default function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="border-sidebar-border border-b">
+      <SidebarHeader className="">
+      {/* <SidebarHeader className="border-sidebar-border border-b"> */}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link to="/dashboard" />}>

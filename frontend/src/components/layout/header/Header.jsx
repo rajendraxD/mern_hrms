@@ -1,7 +1,8 @@
 import { useNavigate } from "react-router-dom"
 import { useSelector, useDispatch } from "react-redux"
-import { LogOut, User, Settings } from "lucide-react"
+import { LogOut, User, Settings, Sun, Moon, Monitor } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useTheme } from "@/hooks/use-theme"
 
 import { SidebarTrigger } from "@/components/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,6 +18,7 @@ import {
 import { logoutThunk } from "@/app/slices/userSlice"
 
 export default function AppHeader() {
+  const { theme, setTheme, THEMES } = useTheme()
   const { user } = useSelector((s) => s.user)
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -25,6 +27,21 @@ export default function AppHeader() {
     <header className="flex h-14 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger />
       <div className="flex-1" />
+      <div className="flex items-center gap-1">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8"
+          onClick={() => {
+            const idx = THEMES.indexOf(theme)
+            setTheme(THEMES[(idx + 1) % THEMES.length])
+          }}
+          title={`Theme: ${theme}`}
+        >
+          {theme === "light" ? <Sun className="size-4" /> :
+           theme === "dark" ? <Moon className="size-4" /> :
+           <Monitor className="size-4" />}
+        </Button>
       {user && (
         <DropdownMenu>
           <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="size-8 rounded-full" />}>
@@ -59,6 +76,7 @@ export default function AppHeader() {
           </DropdownMenuContent>
         </DropdownMenu>
       )}
+      </div>
     </header>
   )
 }
