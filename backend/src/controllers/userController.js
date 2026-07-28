@@ -96,15 +96,14 @@ export const logout = asyncHandler(async (req, res) => {
 });
 
 export const refreshToken = asyncHandler(async (req, res) => {
-  const refreshToken = req.cookies?.refreshToken;
-  if (!refreshToken) return res.status(204).end();
+  const token = req.cookies?.refreshToken;
+  if (!token) return res.status(204).end();
 
-  const decoded = verifyRefreshToken(refreshToken);
+  const decoded = verifyRefreshToken(token);
   const user = await UserModel.findOne({
     _id: decoded.id,
-    refreshToken: refreshToken,
-  });
-  // .select("_id role");
+    refreshToken: token,
+  }).select("_id role name email avatar");
 
   if (!user) {
     throw ApiError.unauthorized("Invalid or expired refresh token.");
@@ -112,8 +111,10 @@ export const refreshToken = asyncHandler(async (req, res) => {
 
   const tokens = generateTokens(user._id, user.role);
 
-  user.refreshToken = tokens.refreshToken;
-  await user.save();
+  await UserModel.updateOne(
+    { _id: user._id },
+    { $set: { refreshToken: tokens.refreshToken } },
+  );
 
   setTokenOnCookie(res, tokens);
   return res.status(200).json({

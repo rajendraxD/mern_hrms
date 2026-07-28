@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { CardSkeleton } from "../../../components/loading-skeleton";
+import { CardSkeleton } from "../../../components/loadingSkeleton";
 
 export default function DashboardPage() {
   const dispatch = useDispatch();
