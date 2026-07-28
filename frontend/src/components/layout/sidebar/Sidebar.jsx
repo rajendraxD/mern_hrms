@@ -16,6 +16,11 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar"
 
 const NAV_ITEMS = [
   {
@@ -54,7 +59,7 @@ export default function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="">
-      {/* <SidebarHeader className="border-sidebar-border border-b"> */}
+        {/* <SidebarHeader className="border-sidebar-border border-b"> */}
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" render={<Link to="/dashboard" />}>
@@ -100,7 +105,15 @@ export default function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton size="lg" render={<Link to="/profile" />}>
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-accent text-sidebar-accent-foreground">
-                  <span className="text-sm font-medium">{user.name?.[0] || "U"}</span>
+                  {/* <span className="text-sm font-medium">{user.name?.[0] || "U"}</span> */}
+                  <Avatar>
+                    <AvatarImage
+                      src={user.avatar}
+                      alt="@shadcn"
+                    // className="grayscale"
+                    />
+                    <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
+                  </Avatar>
                 </div>
                 <div className="flex flex-col gap-0.5 leading-none">
                   <span className="truncate font-medium">{user.name}</span>

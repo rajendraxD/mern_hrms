@@ -15,6 +15,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { googleLogout } from "@react-oauth/google"
 import { logoutThunk } from "@/app/slices/userSlice"
 
 export default function AppHeader() {
@@ -69,7 +70,7 @@ export default function AppHeader() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={() => dispatch(logoutThunk())}>
+            <DropdownMenuItem variant="destructive" onClick={() => { googleLogout(); dispatch(logoutThunk()) }}>
               <LogOut className="size-4" />
               Log out
             </DropdownMenuItem>
