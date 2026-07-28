@@ -70,6 +70,7 @@ export default function LoginPage() {
                   id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="name@example.com"
                   className="pl-10"
                   value={form.email}
@@ -90,6 +91,7 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   className="pl-10 pr-10"
                   value={form.password}

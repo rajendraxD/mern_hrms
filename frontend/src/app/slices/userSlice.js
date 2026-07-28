@@ -130,7 +130,6 @@ export const userSlice = createSlice({
 
     /* ── Me ── */
     builder
-     builder
       .addCase(profileThunk.pending, (state) => {
         state.status = "loading";
         state.error = null;

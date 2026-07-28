@@ -79,8 +79,10 @@ export default function RegisterPage() {
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
+                  id="name"
                   name="name"
                   type="text"
+                  autoComplete="name"
                   placeholder="John Doe"
                   className="pl-10"
                   value={form.name}
@@ -99,8 +101,10 @@ export default function RegisterPage() {
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
+                  id="email"
                   name="email"
                   type="email"
+                  autoComplete="email"
                   placeholder="name@example.com"
                   className="pl-10"
                   value={form.email}
@@ -119,8 +123,10 @@ export default function RegisterPage() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
+                  id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
                   placeholder="••••••••"
                   className="pl-10 pr-10"
                   value={form.password}
@@ -153,8 +159,10 @@ export default function RegisterPage() {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
                 <Input
+                  id="confirmPassword"
                   name="confirmPassword"
                   type={showConfirm ? "text" : "password"}
+                  autoComplete="new-password"
                   placeholder="••••••••"
                   className="pl-10 pr-10"
                   value={form.confirmPassword}

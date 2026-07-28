@@ -25,12 +25,10 @@ export default function AppHeader() {
       <div className="flex-1" />
       {user && (
         <DropdownMenu>
-          <DropdownMenuTrigger>
-            <button className="flex items-center gap-2 rounded-full outline-none">
-              <Avatar className="size-8">
-                <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
-              </Avatar>
-            </button>
+          <DropdownMenuTrigger className="flex items-center gap-2 rounded-full outline-none">
+            <Avatar className="size-8">
+              <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
+            </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>

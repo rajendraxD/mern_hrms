@@ -1,8 +1,8 @@
-import { lazy, Suspense, useEffect } from "react"
+import { lazy, Suspense, useEffect, useRef } from "react"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import { ProtectedRoute, PublicRoute } from "./components/ProtectedRoute"
 import { refreshTokenThunk } from "./app/slices/userSlice"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import LoadingSpinner from "./components/LoadingSpinner"
 import MainLayout from "./components/layout/main"
 
@@ -12,10 +12,24 @@ const DashboardPage = lazy(() => import("./pages/features/dashboard/DashboardPag
 
 export default function App() {
   const dispatch = useDispatch();
+  const { initialized, accessToken } = useSelector((s) => s.user);
+  const mounted = useRef(false);
 
   // restore session from httpOnly cookie — non-blocking, resolves post-paint
-  useEffect(() => { dispatch(refreshTokenThunk()); }, [dispatch]);
+  useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+    if (!accessToken)
+      dispatch(refreshTokenThunk());
+  }, [dispatch, accessToken]);
 
+  if (!initialized) {
+    return (
+      <div className="loading-screen">
+        <LoadingSpinner />
+      </div>
+    );
+  }
   return (
     <BrowserRouter>
       <Suspense fallback={<LoadingSpinner />}>
