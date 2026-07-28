@@ -16,6 +16,7 @@ export const envConfig = {
   isProd: getEnv("NODE_ENV", "development") === "production",
   mongoUri: getEnv("MONGO_URI", "mongodb://localhost:27017/hrms"),
   isVercel: getEnv("VERCEL", "false") === "true",
+  googleClientId: getEnv("GOOGLE_CLIENT_ID"),
   jwt: {
     accessSecret: getEnv("JWT_ACCESS_SECRET", "access_secret"),
     accessExpiry: getEnv("JWT_ACCESS_EXPIRY", "15m"),

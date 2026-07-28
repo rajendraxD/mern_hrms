@@ -13,6 +13,18 @@ export const loginThunk = createAsyncThunk(
   },
 );
 
+export const googleLoginThunk = createAsyncThunk(
+  "user/googleLogin",
+  async (credential, { rejectWithValue }) => {
+    try {
+      const res = await api.post("/user/google", { credential });
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Google sign-in failed");
+    }
+  },
+);
+
 export const registerThunk = createAsyncThunk(
   "user/register",
   async (body, { rejectWithValue }) => {
@@ -148,6 +160,22 @@ export const userSlice = createSlice({
       })
       .addCase(refreshTokenThunk.rejected, (state) => {
         state.initialized = true;
+      });
+
+    /* ── Google Login ── */
+    builder
+      .addCase(googleLoginThunk.pending, (state) => {
+        state.status = "loading";
+        state.error = null;
+      })
+      .addCase(googleLoginThunk.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.user = action.payload.user;
+        state.accessToken = action.payload.accessToken;
+      })
+      .addCase(googleLoginThunk.rejected, (state, action) => {
+        state.status = "failed";
+        state.error = action.payload;
       });
 
     /* ── Logout ── */

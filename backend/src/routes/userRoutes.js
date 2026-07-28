@@ -1,5 +1,6 @@
 import express from "express";
 import * as userController from "../controllers/userController.js";
+import { googleAuth } from "../controllers/googleController.js";
 import { isAuthenticate } from "../middlewares/auth.js";
 import { authLimiter } from "../middlewares/rateLimiter.js";
 import { body } from "express-validator";
@@ -73,6 +74,7 @@ router.post(
   userController.register,
 );
 router.post("/login", loginValidate, authLimiter, userController.login);
+router.post("/google", authLimiter, googleAuth);
 router.post("/logout", isAuthenticate, userController.logout);
 router.get("/refreshToken", userController.refreshToken);
 router.get("/me", isAuthenticate, userController.profile);

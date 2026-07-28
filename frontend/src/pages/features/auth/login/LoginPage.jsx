@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { loginThunk, setError } from "@/app/slices/userSlice";
+import { loginThunk, googleLoginThunk, setError } from "@/app/slices/userSlice";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,7 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Mail, Lock, Eye, EyeOff, Loader2 } from "lucide-react";
+import { GoogleLogin } from "@react-oauth/google";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
@@ -124,6 +125,24 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
+
+          <div className="relative my-4">
+            <div className="absolute inset-0 flex items-center">
+              <span className="w-full border-t" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+
+          <GoogleLogin
+            onSuccess={(res) => dispatch(googleLoginThunk(res.credential))}
+            onError={() => dispatch(setError("Google sign-in failed"))}
+            size="large"
+            shape="rectangular"
+            theme="outline"
+            text="signin_with"
+          />
 
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don&apos;t have an account?{" "}

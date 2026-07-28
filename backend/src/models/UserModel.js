@@ -13,6 +13,12 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
     avatar: { type: String, default: "" },
+    provider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+    googleId: { type: String, default: null },
     refreshToken: { type: String },
   },
   {
